@@ -65,7 +65,7 @@ jobs:
           if (-not (Test-Path .\installer\publish\WordLatexAddin.vsto)) {
             throw 'VSTO deployment manifest was not generated.'
           }
-          Get-ChildItem .\installer\publish\Application Files -Recurse -File -Filter '*.deploy' | ForEach-Object {
+          Get-ChildItem '.\installer\publish\Application Files' -Recurse -File -Filter '*.deploy' | ForEach-Object {
             $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
             Copy-Item -LiteralPath $_.FullName -Destination $target -Force
           }
@@ -120,3 +120,4 @@ jobs:
               --title "WordLatexVSTO $env:PRODUCT_VERSION" `
               --notes "Installable Word VSTO add-in with LaTeX scanning, native OMML conversion, automatic mode, equation numbering, and cross-references."
           }
+
