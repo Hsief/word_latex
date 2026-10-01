@@ -60,8 +60,8 @@ Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""Root"" ""{app}
 Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""TrustedPublisher"" ""{app}\WordLatexVSTO.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "正在注册 WordLatexVSTO 发布者..."
 
 [UninstallRun]
-Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\TrustedPublisher\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated ignoreerrors
-Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\Root\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated ignoreerrors
+Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\TrustedPublisher\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated
+Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\Root\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated
 
 [Code]
 function GetManifestUri(Param: String): String;
