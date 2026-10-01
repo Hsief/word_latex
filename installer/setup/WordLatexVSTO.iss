@@ -2,6 +2,10 @@
   #define MyAppVersion "1.0.0"
 #endif
 
+#ifndef SigningCertificateThumbprint
+  #define SigningCertificateThumbprint ""
+#endif
+
 #define MyAppName "WordLatexVSTO"
 #define MyPublisher "WordLatexVSTO contributors"
 #define MyAppId "{{BFEF1444-9C43-4FF2-B458-F45AFD58D4DC}"
@@ -34,6 +38,7 @@ Name: "en"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "..\publish\WordLatexAddin.vsto"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\publish\Application Files\*"; DestDir: "{app}\Application Files"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "WordLatexVSTO.cer"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\docs\INSTALL.md"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "..\..\docs\USER_GUIDE.md"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
@@ -49,6 +54,14 @@ Root: HKCU; Subkey: "Software\Microsoft\Office\Word\Addins\WordLatexAddin"; Valu
 Name: "{group}\使用说明"; Filename: "{app}\docs\USER_GUIDE.md"
 Name: "{group}\安装说明"; Filename: "{app}\docs\INSTALL.md"
 Name: "{group}\卸载 WordLatexVSTO"; Filename: "{uninstallexe}"
+
+[Run]
+Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""Root"" ""{app}\WordLatexVSTO.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "正在建立 WordLatexVSTO 清单信任..."
+Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""TrustedPublisher"" ""{app}\WordLatexVSTO.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "正在注册 WordLatexVSTO 发布者..."
+
+[UninstallRun]
+Filename: "{sys}\certutil.exe"; Parameters: "-user -delstore ""TrustedPublisher"" ""{#SigningCertificateThumbprint}"""; Flags: runhidden waituntilterminated skipifdoesntexist
+Filename: "{sys}\certutil.exe"; Parameters: "-user -delstore ""Root"" ""{#SigningCertificateThumbprint}"""; Flags: runhidden waituntilterminated skipifdoesntexist
 
 [Code]
 function GetManifestUri(Param: String): String;

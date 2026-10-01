@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  PRODUCT_VERSION: 1.0.0
+  PRODUCT_VERSION: 1.0.1
 
 jobs:
   build:
@@ -36,6 +36,7 @@ jobs:
             -CertStoreLocation 'Cert:\CurrentUser\My' `
             -KeyExportPolicy Exportable `
             -NotAfter (Get-Date).AddYears(2)
+          Export-Certificate -Cert $cert -FilePath .\installer\setup\WordLatexVSTO.cer | Out-Null
           "thumbprint=$($cert.Thumbprint)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Build solution
@@ -70,7 +71,7 @@ jobs:
         run: |
           $iscc = (Get-Command iscc.exe -ErrorAction SilentlyContinue).Source
           if (-not $iscc) { $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' }
-          & $iscc "/DMyAppVersion=$env:PRODUCT_VERSION" .\installer\setup\WordLatexVSTO.iss
+          & $iscc "/DMyAppVersion=$env:PRODUCT_VERSION" "/DSigningCertificateThumbprint=${{ steps.certificate.outputs.thumbprint }}" .\installer\setup\WordLatexVSTO.iss
           if (-not (Test-Path .\installer\publish\WordLatexVSTO_Setup.exe)) {
             throw 'Installer was not generated.'
           }

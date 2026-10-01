@@ -4,8 +4,10 @@
 *.user
 *.suo
 *.pfx
+*.cer
 installer/publish/*
 !installer/publish/.gitkeep
 release/
 work/
 TestResults/
+

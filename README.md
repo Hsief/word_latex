@@ -71,7 +71,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.0.0`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.0.1`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 
@@ -87,9 +87,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 2. 运行转换器和扫描器测试。
 3. 生成已签名的 VSTO 部署清单。
 4. 使用 Inno Setup 生成 `WordLatexVSTO_Setup.exe`。
-5. 上传 Actions artifact；主分支构建同时创建或更新 `v1.0.0` Release。
+5. 上传 Actions artifact；主分支构建同时创建或更新与 `PRODUCT_VERSION` 对应的 Release。
 
-CI 使用临时自签名证书签署 VSTO 清单。正式企业分发时，应通过仓库机密提供组织的代码签名证书并替换该步骤。
+CI 使用临时自签名证书签署 VSTO 清单，并将对应公钥证书封装进安装器，仅为当前用户建立 VSTO 清单信任；卸载时按指纹移除。正式企业分发时，应通过仓库机密提供组织的代码签名证书并替换该步骤。
 
 ## AfterMath 集成
 
