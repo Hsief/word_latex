@@ -15,19 +15,23 @@
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="WordLatexVSTO" />
       </Directory>
+      <Directory Id="ProgramFilesFolder" />
     </Directory>
 
     <DirectoryRef Id="INSTALLFOLDER">
       <Component Id="WordAddinRegistry64" Guid="*" Win64="yes">
-        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" Action="createAndRemoveOnUninstall">
+        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" ForceDeleteOnUninstall="yes">
           <RegistryValue Id="Reg64FriendlyName" Name="FriendlyName" Type="string" Value="WordLatexVSTO" />
           <RegistryValue Id="Reg64Description" Name="Description" Type="string" Value="LaTeX 自动转换为 Word 原生公式" />
           <RegistryValue Id="Reg64LoadBehavior" Name="LoadBehavior" Type="integer" Value="3" />
           <RegistryValue Id="Reg64Manifest" Name="Manifest" Type="string" Value="file:///[INSTALLFOLDER]WordLatexVSTOAddin.vsto|vstolocal" KeyPath="yes" />
         </RegistryKey>
       </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ProgramFilesFolder">
       <Component Id="WordAddinRegistry32" Guid="*" Win64="no">
-        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" Action="createAndRemoveOnUninstall">
+        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" ForceDeleteOnUninstall="yes">
           <RegistryValue Id="Reg32FriendlyName" Name="FriendlyName" Type="string" Value="WordLatexVSTO" />
           <RegistryValue Id="Reg32Description" Name="Description" Type="string" Value="LaTeX 自动转换为 Word 原生公式" />
           <RegistryValue Id="Reg32LoadBehavior" Name="LoadBehavior" Type="integer" Value="3" />
