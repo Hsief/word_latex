@@ -60,6 +60,7 @@ jobs:
             /p:PublishUrl="$publish" /p:ApplicationVersion="$env:PRODUCT_VERSION.0" `
             /p:SignManifests=true `
             /p:ManifestCertificateThumbprint="${{ steps.certificate.outputs.thumbprint }}"
+          Copy-Item .\src\WordLatexAddin\bin\Release\app.publish\* .\installer\publish\ -Recurse -Force
           if (-not (Test-Path .\installer\publish\WordLatexAddin.vsto)) {
             throw 'VSTO deployment manifest was not generated.'
           }

@@ -47,6 +47,7 @@ try {
         "/p:ApplicationVersion=$Version.0" /p:SignManifests=true `
         "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
     if ($LASTEXITCODE -ne 0) { throw 'VSTO publish failed.' }
+    Copy-Item (Join-Path $root 'src\WordLatexAddin\bin\Release\app.publish\*') $publish -Recurse -Force
 
     & $iscc "/DMyAppVersion=$Version" (Join-Path $root 'installer\setup\WordLatexVSTO.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }
