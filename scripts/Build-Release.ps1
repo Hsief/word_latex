@@ -1,6 +1,6 @@
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '1.0.0'
+    [string]$Version = '1.0.3'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,6 +48,16 @@ try {
         "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
     if ($LASTEXITCODE -ne 0) { throw 'VSTO publish failed.' }
     Copy-Item (Join-Path $root 'src\WordLatexAddin\bin\Release\app.publish\*') $publish -Recurse -Force
+
+    Get-ChildItem (Join-Path $publish 'Application Files') -Recurse -File -Filter '*.deploy' | ForEach-Object {
+        $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
+        Copy-Item -LiteralPath $_.FullName -Destination $target -Force
+    }
+
+    $versionDirectory = Join-Path $publish ("Application Files\WordLatexAddin_{0}_0" -f $Version.Replace('.', '_'))
+    if (-not (Test-Path (Join-Path $versionDirectory 'WordLatexAddin.dll'))) {
+        throw 'The local VSTO layout is missing WordLatexAddin.dll.'
+    }
 
     & $iscc "/DMyAppVersion=$Version" (Join-Path $root 'installer\setup\WordLatexVSTO.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }

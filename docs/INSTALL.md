@@ -4,10 +4,10 @@
 
 1. 保存文档并关闭所有 Microsoft Word 窗口。
 2. 从项目 Releases 下载 `WordLatexVSTO_Setup.exe`。
-3. 双击安装；默认安装到当前用户的 `%LocalAppData%\Programs\WordLatexVSTO`，不需要管理员权限。
+3. 双击安装并同意 Windows 管理员确认；默认安装到 `%ProgramFiles%\WordLatexVSTO`。
 4. 打开 Word，在顶部确认出现“论文工具”。
 
-社区构建使用自签名证书签署 VSTO 清单。安装器会把随安装包附带的公钥证书加入当前用户的“受信任的根证书颁发机构”和“受信任的发布者”，并在卸载时按指纹移除。该操作不会修改计算机级证书库。请只安装从本项目 Release 下载且哈希符合发布页的文件；机构环境建议由管理员使用组织证书重新签名。
+社区构建使用临时自签名证书保护 VSTO 清单完整性，并安装到 Microsoft VSTO 支持的 `Program Files` 受信任位置。安装器不会把社区自签名证书写入系统根证书库。请只安装从本项目 Release 下载且哈希符合发布页的文件；机构环境建议由管理员使用组织证书重新签名。
 
 如果 Word 启动时显示“隐藏的模块中的编译错误”，错误来自 `.dotm`/`.dot` VBA 模板，而不是 C# VSTO 清单。请先关闭 Word，将 `%APPDATA%\Microsoft\Word\STARTUP` 中对应的旧模板移出该目录后再启动 Word；不要直接删除，便于需要时恢复。
 
@@ -52,4 +52,3 @@ Word 在加载项启动异常或启动过慢时可能自动禁用。先在“禁
 ### 安装器提示 Word 正在运行
 
 关闭所有 Word 窗口；若任务管理器中仍有 `WINWORD.EXE`，先保存工作并结束该进程，再重新安装。
-

@@ -1,9 +1,5 @@
 #ifndef MyAppVersion
-  #define MyAppVersion "1.0.2"
-#endif
-
-#ifndef SigningCertificateThumbprint
-  #define SigningCertificateThumbprint ""
+  #define MyAppVersion "1.0.3"
 #endif
 
 #define MyAppName "WordLatexVSTO"
@@ -17,11 +13,10 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyPublisher}
 AppPublisherURL=https://github.com/Hsief/word_latex
 AppSupportURL=https://github.com/Hsief/word_latex/issues
-DefaultDirName={localappdata}\Programs\WordLatexVSTO
+DefaultDirName={autopf}\WordLatexVSTO
 DefaultGroupName=WordLatexVSTO
 DisableProgramGroupPage=yes
-PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
+PrivilegesRequired=admin
 OutputDir=..\publish
 OutputBaseFilename=WordLatexVSTO_Setup
 Compression=lzma2/max
@@ -38,7 +33,6 @@ Name: "en"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "..\publish\WordLatexAddin.vsto"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\publish\Application Files\*"; DestDir: "{app}\Application Files"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "WordLatexVSTO.cer"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\docs\INSTALL.md"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "..\..\docs\USER_GUIDE.md"; DestDir: "{app}\docs"; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
@@ -56,12 +50,10 @@ Name: "{group}\安装说明"; Filename: "{app}\docs\INSTALL.md"
 Name: "{group}\卸载 WordLatexVSTO"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""Root"" ""{app}\WordLatexVSTO.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "正在建立 WordLatexVSTO 清单信任..."
-Filename: "{sys}\certutil.exe"; Parameters: "-user -addstore -f ""TrustedPublisher"" ""{app}\WordLatexVSTO.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "正在注册 WordLatexVSTO 发布者..."
+Filename: "{code:GetVstoInstallerPath}"; Parameters: "/Install ""{app}\WordLatexAddin.vsto"" /Silent"; Flags: runhidden waituntilterminated runasoriginaluser skipifdoesntexist; StatusMsg: "正在注册 WordLatexVSTO..."
 
 [UninstallRun]
-Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\TrustedPublisher\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated
-Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\SystemCertificates\Root\Certificates\{#SigningCertificateThumbprint}"" /f"; Flags: runhidden waituntilterminated
+Filename: "{code:GetVstoInstallerPath}"; Parameters: "/Uninstall ""{app}\WordLatexAddin.vsto"" /Silent"; Flags: runhidden waituntilterminated runasoriginaluser skipifdoesntexist
 
 [Code]
 function GetManifestUri(Param: String): String;
@@ -70,7 +62,25 @@ var
 begin
   ManifestPath := ExpandConstant('{app}\WordLatexAddin.vsto');
   StringChangeEx(ManifestPath, '\', '/', True);
+  StringChangeEx(ManifestPath, ' ', '%20', True);
   Result := 'file:///' + ManifestPath + '|vstolocal';
+end;
+
+function GetVstoInstallerPath(Param: String): String;
+var
+  Candidate: String;
+begin
+  if IsWin64 then
+  begin
+    Candidate := ExpandConstant('{commoncf64}\Microsoft Shared\VSTO\10.0\VSTOInstaller.exe');
+    if FileExists(Candidate) then
+    begin
+      Result := Candidate;
+      exit;
+    end;
+  end;
+
+  Result := ExpandConstant('{commoncf32}\Microsoft Shared\VSTO\10.0\VSTOInstaller.exe');
 end;
 
 function InitializeSetup(): Boolean;
@@ -91,4 +101,3 @@ begin
   if FindWindowByClassName('OpusApp') <> 0 then
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
 end;
-

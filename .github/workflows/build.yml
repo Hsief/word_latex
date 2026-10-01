@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  PRODUCT_VERSION: 1.0.2
+  PRODUCT_VERSION: 1.0.3
 
 jobs:
   build:
@@ -65,13 +65,21 @@ jobs:
           if (-not (Test-Path .\installer\publish\WordLatexAddin.vsto)) {
             throw 'VSTO deployment manifest was not generated.'
           }
+          Get-ChildItem .\installer\publish\Application Files -Recurse -File -Filter '*.deploy' | ForEach-Object {
+            $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
+            Copy-Item -LiteralPath $_.FullName -Destination $target -Force
+          }
+          $versionDirectory = ".\installer\publish\Application Files\WordLatexAddin_$($env:PRODUCT_VERSION.Replace('.', '_'))_0"
+          if (-not (Test-Path "$versionDirectory\WordLatexAddin.dll")) {
+            throw 'The local VSTO layout is missing WordLatexAddin.dll.'
+          }
 
       - name: Build installer
         shell: powershell
         run: |
           $iscc = (Get-Command iscc.exe -ErrorAction SilentlyContinue).Source
           if (-not $iscc) { $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' }
-          & $iscc "/DMyAppVersion=$env:PRODUCT_VERSION" "/DSigningCertificateThumbprint=${{ steps.certificate.outputs.thumbprint }}" .\installer\setup\WordLatexVSTO.iss
+          & $iscc "/DMyAppVersion=$env:PRODUCT_VERSION" .\installer\setup\WordLatexVSTO.iss
           if (-not (Test-Path .\installer\publish\WordLatexVSTO_Setup.exe)) {
             throw 'Installer was not generated.'
           }
@@ -112,4 +120,3 @@ jobs:
               --title "WordLatexVSTO $env:PRODUCT_VERSION" `
               --notes "Installable Word VSTO add-in with LaTeX scanning, native OMML conversion, automatic mode, equation numbering, and cross-references."
           }
-
