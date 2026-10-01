@@ -53,7 +53,7 @@ Name: "{group}\卸载 WordLatexVSTO"; Filename: "{uninstallexe}"
 Filename: "{code:GetVstoInstallerPath}"; Parameters: "/Install ""{app}\WordLatexAddin.vsto"" /Silent"; Flags: runhidden waituntilterminated runasoriginaluser skipifdoesntexist; StatusMsg: "正在注册 WordLatexVSTO..."
 
 [UninstallRun]
-Filename: "{code:GetVstoInstallerPath}"; Parameters: "/Uninstall ""{app}\WordLatexAddin.vsto"" /Silent"; Flags: runhidden waituntilterminated runasoriginaluser skipifdoesntexist
+Filename: "{code:GetVstoInstallerPath}"; Parameters: "/Uninstall ""{app}\WordLatexAddin.vsto"" /Silent"; Flags: runhidden waituntilterminated skipifdoesntexist
 
 [Code]
 function GetManifestUri(Param: String): String;
@@ -101,3 +101,4 @@ begin
   if FindWindowByClassName('OpusApp') <> 0 then
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
 end;
+
