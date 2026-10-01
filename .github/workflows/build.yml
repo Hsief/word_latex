@@ -109,6 +109,6 @@ jobs:
             gh release create $tag .\installer\publish\WordLatexVSTO_Setup.exe .\WordLatexVSTO-$env:PRODUCT_VERSION.zip `
               --target "$env:GITHUB_SHA" `
               --title "WordLatexVSTO $env:PRODUCT_VERSION" `
-              --notes "首个可安装版本：LaTeX 扫描、原生 OMML 转换、自动模式、公式编号与交叉引用。"
+              --notes "Installable Word VSTO add-in with LaTeX scanning, native OMML conversion, automatic mode, equation numbering, and cross-references."
           }
 
