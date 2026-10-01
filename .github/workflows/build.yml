@@ -99,8 +99,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "v$env:PRODUCT_VERSION"
+          $ErrorActionPreference = 'Continue'
           gh release view $tag *> $null
-          if ($LASTEXITCODE -eq 0) {
+          $releaseExists = $LASTEXITCODE -eq 0
+          $ErrorActionPreference = 'Stop'
+          if ($releaseExists) {
             gh release upload $tag .\installer\publish\WordLatexVSTO_Setup.exe .\WordLatexVSTO-$env:PRODUCT_VERSION.zip --clobber
           } else {
             gh release create $tag .\installer\publish\WordLatexVSTO_Setup.exe .\WordLatexVSTO-$env:PRODUCT_VERSION.zip `
@@ -108,3 +111,4 @@ jobs:
               --title "WordLatexVSTO $env:PRODUCT_VERSION" `
               --notes "首个可安装版本：LaTeX 扫描、原生 OMML 转换、自动模式、公式编号与交叉引用。"
           }
+
