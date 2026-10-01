@@ -1,0 +1,34 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AfterMathCore", "src\AfterMathCore\AfterMathCore.csproj", "{E71B6B37-731D-4D6A-A83A-655177B5CF72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLatexAddin", "src\WordLatexAddin\WordLatexAddin.csproj", "{0F4EA5CD-8D22-4CE5-9101-638C606390A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AfterMathCore.Tests", "tests\AfterMathCore.Tests\AfterMathCore.Tests.csproj", "{6428D197-3F0D-46BE-BFF0-1C868834D9BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
+		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Debug|Any CPU.Build.0 = Debug|AnyCPU
+		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Release|Any CPU.ActiveCfg = Release|AnyCPU
+		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Release|Any CPU.Build.0 = Release|AnyCPU
+		{0F4EA5CD-8D22-4CE5-9101-638C606390A8}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
+		{0F4EA5CD-8D22-4CE5-9101-638C606390A8}.Debug|Any CPU.Build.0 = Debug|AnyCPU
+		{0F4EA5CD-8D22-4CE5-9101-638C606390A8}.Release|Any CPU.ActiveCfg = Release|AnyCPU
+		{0F4EA5CD-8D22-4CE5-9101-638C606390A8}.Release|Any CPU.Build.0 = Release|AnyCPU
+		{6428D197-3F0D-46BE-BFF0-1C868834D9BB}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
+		{6428D197-3F0D-46BE-BFF0-1C868834D9BB}.Debug|Any CPU.Build.0 = Debug|AnyCPU
+		{6428D197-3F0D-46BE-BFF0-1C868834D9BB}.Release|Any CPU.ActiveCfg = Release|AnyCPU
+		{6428D197-3F0D-46BE-BFF0-1C868834D9BB}.Release|Any CPU.Build.0 = Release|AnyCPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

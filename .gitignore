@@ -1,0 +1,11 @@
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.pfx
+installer/publish/*
+!installer/publish/.gitkeep
+release/
+work/
+TestResults/
