@@ -3,10 +3,11 @@
   <Product Id="*"
            Name="WordLatexVSTO Word 插件"
            Language="2052"
+           Codepage="936"
            Version="$(var.ProductVersion)"
            Manufacturer="WordLatexVSTO contributors"
            UpgradeCode="{6F1A5592-9AC8-48CE-93F3-BB17E878E7FD}">
-    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" SummaryCodepage="936" />
     <MajorUpgrade DowngradeErrorMessage="已安装更新版本的 WordLatexVSTO。" />
     <MediaTemplate EmbedCab="yes" />
 
@@ -42,3 +43,4 @@
     </Feature>
   </Product>
 </Wix>
+
