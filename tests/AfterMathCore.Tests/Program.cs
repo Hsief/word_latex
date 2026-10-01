@@ -28,6 +28,36 @@ namespace AfterMathCore.Tests
             AssertContains(generator.Convert(@"SO(3)+SE(3)+FMCW+LiDAR+IMU"), "m:val=\"p\"", "research terms");
             AssertXml(generator.Convert(@"\left(\frac{x}{y}\right)"), "well-formed OMML");
 
+            AssertContains(generator.Convert(@"\dfrac{1}{2}+\tfrac12"), "<m:f>", "display and text fractions");
+            AssertContains(generator.Convert(@"\binom{n}{k}"), "m:val=\"noBar\"", "binomial no-bar fraction");
+            AssertContains(generator.Convert(@"\sqrt[3]{x}"), "<m:deg>", "radical degree");
+            AssertContains(generator.Convert(@"\left\langle x,y\right\rangle"), "m:val=\"⟨\"", "angle delimiter start");
+            AssertContains(generator.Convert(@"\left\langle x,y\right\rangle"), "m:val=\"⟩\"", "angle delimiter end");
+            AssertContains(generator.Convert(@"\left\|\mathbf{x}\right\|_2"), "m:val=\"‖\"", "norm delimiters");
+            AssertContains(generator.Convert(@"\overline{AB}+\underline{x}"), "<m:bar>", "overline and underline");
+            AssertContains(generator.Convert(@"\overset{!}{=}+\underset{x}{\min}"), "<m:limUpp>", "upper annotation");
+            AssertContains(generator.Convert(@"\overset{!}{=}+\underset{x}{\min}"), "<m:limLow>", "lower annotation");
+            AssertContains(generator.Convert(@"\underbrace{x_1+\cdots+x_n}_{n\text{ terms}}"), "<m:groupChr>", "underbrace");
+            AssertContains(generator.Convert(@"\boxed{x+y}"), "<m:borderBox>", "boxed equation");
+            AssertContains(generator.Convert(@"\iint_\Omega f\,dA+\oint_C x\,dx"), "∬", "double integral");
+            AssertContains(generator.Convert(@"\iint_\Omega f\,dA+\oint_C x\,dx"), "∮", "contour integral");
+            AssertContains(generator.Convert(@"\sum\limits_{\substack{i=1\\i\ne j}}^n a_i"), "<m:m>", "substack limits");
+            AssertContains(generator.Convert(@"\begin{vmatrix}a&b\\c&d\end{vmatrix}"), "m:val=\"|\"", "determinant matrix");
+            AssertContains(generator.Convert(@"\begin{Vmatrix}a&b\\c&d\end{Vmatrix}"), "m:val=\"‖\"", "double-bar matrix");
+            AssertContains(generator.Convert(@"\begin{array}{cc}a&b\\c&d\end{array}"), "<m:m>", "array environment");
+            AssertContains(generator.Convert(@"\begin{equation*}E=mc^2\end{equation*}"), "<m:sSup>", "equation environment");
+            AssertContains(generator.Convert(@"\mathbb{R}^{3\times3}"), "ℝ", "blackboard alphabet");
+            AssertContains(generator.Convert(@"\mathcal{L}+\mathfrak{g}"), "ℒ", "script alphabet");
+            AssertContains(generator.Convert(@"\bm{\theta}+\textbf{x}"), "m:val=\"bi\"", "bold math alias");
+            AssertContains(generator.Convert(@"\operatorname*{argmin}_{x}\;f(x)"), "argmin", "starred operator name");
+            AssertContains(generator.Convert(@"x\leqslant y\implies y\notin\emptyset"), "⩽", "extended relations");
+            AssertContains(generator.Convert(@"x\leqslant y\implies y\notin\emptyset"), "⇒", "logic implication");
+            AssertContains(generator.Convert(@"f:A\mapsto B,\quad x\mapsto f(x)"), "↦", "mapsto arrow");
+            AssertContains(generator.Convert(@"a\oplus b\otimes c"), "⊕", "extended operators");
+            AssertContains(generator.Convert(@"\sin x+\arctan y+\limsup_{n\to\infty}a_n"), "limsup", "extended functions");
+            AssertContains(generator.Convert(@"a\pmod{n}"), "mod ", "parenthesized modulo");
+            AssertXml(generator.Convert(@"\left[\begin{array}{cc}\hat{x}&\dot{y}\\\vec{v}&\overline{z}\end{array}\right]"), "complex scientific equation");
+
             IList<LatexToken> tokens = new LatexTokenizer(@"x_i^2+\alpha").Tokenize();
             Assert(tokens.Count > 5, "tokenizer");
 

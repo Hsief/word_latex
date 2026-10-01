@@ -58,6 +58,10 @@ namespace AfterMathCore
             if (node.Kind == LatexNodeKind.Fraction)
             {
                 XElement fraction = new XElement(M + "f");
+                if (node.Value == "noBar")
+                {
+                    fraction.Add(new XElement(M + "fPr", new XElement(M + "type", new XAttribute(M + "val", "noBar"))));
+                }
                 XElement numerator = new XElement(M + "num");
                 XElement denominator = new XElement(M + "den");
                 AppendNode(numerator, node.Children[0], inheritedVariant);
@@ -82,7 +86,9 @@ namespace AfterMathCore
             {
                 IDictionary<string, string> accents = new Dictionary<string, string>
                 {
-                    { "hat", "̂" }, { "bar", "̅" }, { "tilde", "̃" }, { "vec", "⃗" }, { "dot", "̇" }, { "ddot", "̈" }
+                    { "hat", "̂" }, { "bar", "̅" }, { "tilde", "̃" }, { "vec", "⃗" },
+                    { "overrightarrow", "⃗" }, { "overleftarrow", "⃖" }, { "dot", "̇" }, { "ddot", "̈" },
+                    { "check", "̌" }, { "breve", "̆" }, { "acute", "́" }, { "grave", "̀" }
                 };
                 XElement accent = new XElement(M + "acc",
                     new XElement(M + "accPr", new XElement(M + "chr", new XAttribute(M + "val", accents[node.Value]))));
@@ -139,6 +145,51 @@ namespace AfterMathCore
                 AppendNode(element, node.Children[0], inheritedVariant);
                 delimiter.Add(element);
                 parent.Add(delimiter);
+                return;
+            }
+            if (node.Kind == LatexNodeKind.Bar)
+            {
+                XElement bar = new XElement(M + "bar",
+                    new XElement(M + "barPr", new XElement(M + "pos", new XAttribute(M + "val", node.Value == "bot" ? "bot" : "top"))));
+                XElement element = new XElement(M + "e");
+                AppendNode(element, node.Children[0], inheritedVariant);
+                bar.Add(element);
+                parent.Add(bar);
+                return;
+            }
+            if (node.Kind == LatexNodeKind.LimitUpper || node.Kind == LatexNodeKind.LimitLower)
+            {
+                XElement limit = new XElement(M + (node.Kind == LatexNodeKind.LimitUpper ? "limUpp" : "limLow"));
+                XElement basis = new XElement(M + "e");
+                AppendNode(basis, node.Children[0], inheritedVariant);
+                XElement limitValue = new XElement(M + "lim");
+                LatexNode limitNode;
+                if (node.Slots.TryGetValue("limit", out limitNode)) AppendNode(limitValue, limitNode, inheritedVariant);
+                limit.Add(basis, limitValue);
+                parent.Add(limit);
+                return;
+            }
+            if (node.Kind == LatexNodeKind.GroupCharacter)
+            {
+                bool bottom = node.Value == "bot";
+                XElement group = new XElement(M + "groupChr",
+                    new XElement(M + "groupChrPr",
+                        new XElement(M + "chr", new XAttribute(M + "val", bottom ? "⏟" : "⏞")),
+                        new XElement(M + "pos", new XAttribute(M + "val", bottom ? "bot" : "top")),
+                        new XElement(M + "vertJc", new XAttribute(M + "val", bottom ? "bot" : "top"))));
+                XElement element = new XElement(M + "e");
+                AppendNode(element, node.Children[0], inheritedVariant);
+                group.Add(element);
+                parent.Add(group);
+                return;
+            }
+            if (node.Kind == LatexNodeKind.BorderBox)
+            {
+                XElement box = new XElement(M + "borderBox");
+                XElement element = new XElement(M + "e");
+                AppendNode(element, node.Children[0], inheritedVariant);
+                box.Add(element);
+                parent.Add(box);
                 return;
             }
 

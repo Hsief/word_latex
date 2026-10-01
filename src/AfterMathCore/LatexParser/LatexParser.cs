@@ -29,23 +29,55 @@ namespace AfterMathCore.LatexParser
         {
             { "in", "∈" }, { "notin", "∉" }, { "ni", "∋" }, { "times", "×" }, { "cdot", "·" },
             { "pm", "±" }, { "mp", "∓" }, { "le", "≤" }, { "leq", "≤" }, { "ge", "≥" },
-            { "geq", "≥" }, { "neq", "≠" }, { "approx", "≈" }, { "equiv", "≡" },
+            { "leqslant", "⩽" }, { "geq", "≥" }, { "geqslant", "⩾" }, { "neq", "≠" }, { "ne", "≠" },
+            { "lt", "<" }, { "gt", ">" }, { "approx", "≈" }, { "sim", "∼" }, { "simeq", "≃" },
+            { "cong", "≅" }, { "equiv", "≡" }, { "ll", "≪" }, { "gg", "≫" },
+            { "prec", "≺" }, { "preceq", "⪯" }, { "succ", "≻" }, { "succeq", "⪰" },
             { "to", "→" }, { "rightarrow", "→" }, { "leftarrow", "←" }, { "leftrightarrow", "↔" },
-            { "Rightarrow", "⇒" }, { "Leftarrow", "⇐" }, { "infty", "∞" }, { "partial", "∂" },
+            { "gets", "←" }, { "mapsto", "↦" }, { "hookrightarrow", "↪" }, { "hookleftarrow", "↩" },
+            { "uparrow", "↑" }, { "downarrow", "↓" }, { "updownarrow", "↕" },
+            { "Rightarrow", "⇒" }, { "Leftarrow", "⇐" }, { "Leftrightarrow", "⇔" },
+            { "longrightarrow", "⟶" }, { "longleftarrow", "⟵" }, { "longleftrightarrow", "⟷" },
+            { "Longrightarrow", "⟹" }, { "Longleftarrow", "⟸" }, { "Longleftrightarrow", "⟺" },
+            { "infty", "∞" }, { "partial", "∂" },
             { "nabla", "∇" }, { "forall", "∀" }, { "exists", "∃" }, { "propto", "∝" },
             { "parallel", "∥" }, { "perp", "⊥" }, { "subset", "⊂" }, { "subseteq", "⊆" },
-            { "supset", "⊃" }, { "supseteq", "⊇" }, { "cup", "∪" }, { "cap", "∩" },
-            { "ldots", "…" }, { "cdots", "⋯" }, { "vdots", "⋮" }, { "ddots", "⋱" }
+            { "supset", "⊃" }, { "supseteq", "⊇" }, { "nsubseteq", "⊈" }, { "nsupseteq", "⊉" },
+            { "cup", "∪" }, { "cap", "∩" }, { "setminus", "∖" }, { "smallsetminus", "∖" },
+            { "emptyset", "∅" }, { "varnothing", "∅" }, { "land", "∧" }, { "wedge", "∧" },
+            { "lor", "∨" }, { "vee", "∨" }, { "neg", "¬" }, { "lnot", "¬" },
+            { "implies", "⇒" }, { "iff", "⇔" }, { "therefore", "∴" }, { "because", "∵" },
+            { "div", "÷" }, { "ast", "∗" }, { "star", "⋆" }, { "circ", "∘" }, { "bullet", "∙" },
+            { "oplus", "⊕" }, { "ominus", "⊖" }, { "otimes", "⊗" }, { "oslash", "⊘" }, { "odot", "⊙" },
+            { "triangle", "△" }, { "angle", "∠" }, { "measuredangle", "∡" },
+            { "ell", "ℓ" }, { "hbar", "ℏ" }, { "Re", "ℜ" }, { "Im", "ℑ" },
+            { "prime", "′" }, { "degree", "°" }, { "top", "⊤" }, { "bot", "⊥" },
+            { "ldots", "…" }, { "dots", "…" }, { "cdots", "⋯" }, { "vdots", "⋮" }, { "ddots", "⋱" }
         };
 
         private static readonly IDictionary<string, string> Blackboard = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            { "R", "ℝ" }, { "N", "ℕ" }, { "Z", "ℤ" }, { "Q", "ℚ" }, { "C", "ℂ" }
+            { "C", "ℂ" }, { "H", "ℍ" }, { "N", "ℕ" }, { "P", "ℙ" },
+            { "Q", "ℚ" }, { "R", "ℝ" }, { "Z", "ℤ" }
+        };
+
+        private static readonly IDictionary<string, string> ScriptLetters = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "B", "ℬ" }, { "E", "ℰ" }, { "F", "ℱ" }, { "H", "ℋ" }, { "I", "ℐ" },
+            { "L", "ℒ" }, { "M", "ℳ" }, { "R", "ℛ" }, { "e", "ℯ" }, { "g", "ℊ" }, { "o", "ℴ" }
+        };
+
+        private static readonly IDictionary<string, string> FrakturLetters = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "C", "ℭ" }, { "H", "ℌ" }, { "I", "ℑ" }, { "R", "ℜ" }, { "Z", "ℨ" }
         };
 
         private static readonly ISet<string> UprightFunctions = new HashSet<string>(StringComparer.Ordinal)
         {
-            "sin", "cos", "tan", "log", "ln", "exp", "min", "max", "det", "dim", "ker", "rank", "tr"
+            "sin", "cos", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan",
+            "sinh", "cosh", "tanh", "coth", "log", "ln", "lg", "exp",
+            "min", "max", "sup", "inf", "lim", "limsup", "liminf",
+            "det", "dim", "ker", "rank", "tr", "gcd", "lcm", "Pr", "arg", "hom"
         };
 
         private readonly string _source;
@@ -75,10 +107,20 @@ namespace AfterMathCore.LatexParser
 
         private LatexNode ParseUntil(char stop)
         {
+            return ParseUntil(stop, false);
+        }
+
+        private LatexNode ParseUntil(char stop, bool stopAtRightDelimiter)
+        {
             List<LatexNode> children = new List<LatexNode>();
             StringBuilder text = new StringBuilder();
             while (_position < _source.Length)
             {
+                if (stopAtRightDelimiter && IsCommandAtCurrentPosition("right"))
+                {
+                    break;
+                }
+
                 char current = _source[_position];
                 if ((stop != '\0' && current == stop) || current == '}')
                 {
@@ -88,7 +130,11 @@ namespace AfterMathCore.LatexParser
                 if (current == '\\')
                 {
                     FlushText(children, text);
-                    children.Add(ParseCommand());
+                    LatexNode commandNode = ParseCommand();
+                    if (commandNode.Kind != LatexNodeKind.Text || !string.IsNullOrEmpty(commandNode.Value))
+                    {
+                        children.Add(commandNode);
+                    }
                     continue;
                 }
 
@@ -172,7 +218,8 @@ namespace AfterMathCore.LatexParser
             if ("\\{}[](),;:! ".IndexOf(current) >= 0)
             {
                 _position++;
-                if (",;:! ".IndexOf(current) >= 0) return LatexNode.Text(" ");
+                if (current == '!') return LatexNode.Text(string.Empty);
+                if (",;: ".IndexOf(current) >= 0) return LatexNode.Text(" ");
                 return LatexNode.Text(current.ToString());
             }
 
@@ -184,20 +231,38 @@ namespace AfterMathCore.LatexParser
                 return LatexNode.Text(_source[_position++].ToString());
             }
 
-            if (name == "left" || name == "right")
+            if (name == "left")
             {
-                SkipSpaces();
-                if (_position >= _source.Length) return LatexNode.Text(string.Empty);
-                string delimiter = ReadDelimiter();
-                return LatexNode.Text(delimiter == "." ? string.Empty : delimiter);
+                return ParseLeftRight();
             }
 
-            if (name == "frac")
+            if (name == "right")
+            {
+                SkipSpaces();
+                return LatexNode.Text(_position >= _source.Length ? string.Empty : ReadDelimiter());
+            }
+
+            if (name == "middle")
+            {
+                SkipSpaces();
+                return LatexNode.Text(_position >= _source.Length ? string.Empty : ReadDelimiter());
+            }
+
+            if (name == "frac" || name == "dfrac" || name == "tfrac" || name == "cfrac")
             {
                 LatexNode fraction = new LatexNode(LatexNodeKind.Fraction);
-                fraction.Children.Add(ParseRequiredGroup(name));
-                fraction.Children.Add(ParseRequiredGroup(name));
+                fraction.Children.Add(ParseRequiredArgument(name));
+                fraction.Children.Add(ParseRequiredArgument(name));
                 return fraction;
+            }
+
+            if (name == "binom" || name == "dbinom" || name == "tbinom")
+            {
+                LatexNode fraction = new LatexNode(LatexNodeKind.Fraction);
+                fraction.Value = "noBar";
+                fraction.Children.Add(ParseRequiredArgument(name));
+                fraction.Children.Add(ParseRequiredArgument(name));
+                return CreateDelimiter("(", ")", fraction);
             }
 
             if (name == "sqrt")
@@ -213,45 +278,130 @@ namespace AfterMathCore.LatexParser
                     radical.Slots["degree"] = new LatexParser(_source.Substring(degreeStart, _position - degreeStart)).Parse();
                     _position++;
                 }
-                radical.Children.Add(ParseRequiredGroup(name));
+                radical.Children.Add(ParseRequiredArgument(name));
                 return radical;
             }
 
-            if (name == "hat" || name == "bar" || name == "tilde" || name == "vec" || name == "dot" || name == "ddot")
+            if (name == "hat" || name == "widehat" || name == "bar" || name == "tilde" || name == "widetilde" ||
+                name == "vec" || name == "overrightarrow" || name == "overleftarrow" || name == "dot" || name == "ddot" ||
+                name == "check" || name == "breve" || name == "acute" || name == "grave")
             {
                 LatexNode accent = new LatexNode(LatexNodeKind.Accent);
-                accent.Value = name;
-                accent.Children.Add(ParseRequiredGroup(name));
+                accent.Value = name == "widehat" ? "hat" : name == "widetilde" ? "tilde" : name;
+                accent.Children.Add(ParseRequiredArgument(name));
                 return accent;
             }
 
-            if (name == "mathbf" || name == "boldsymbol" || name == "mathrm" || name == "mathit" || name == "operatorname" || name == "text")
+            if (name == "overline" || name == "underline")
             {
+                LatexNode bar = new LatexNode(LatexNodeKind.Bar);
+                bar.Value = name == "overline" ? "top" : "bot";
+                bar.Children.Add(ParseRequiredArgument(name));
+                return bar;
+            }
+
+            if (name == "overbrace" || name == "underbrace")
+            {
+                LatexNode groupCharacter = new LatexNode(LatexNodeKind.GroupCharacter);
+                groupCharacter.Value = name == "overbrace" ? "top" : "bot";
+                groupCharacter.Children.Add(ParseRequiredArgument(name));
+                return groupCharacter;
+            }
+
+            if (name == "overset" || name == "stackrel" || name == "underset")
+            {
+                LatexNode limit = new LatexNode(name == "underset" ? LatexNodeKind.LimitLower : LatexNodeKind.LimitUpper);
+                limit.Slots["limit"] = ParseRequiredArgument(name);
+                limit.Children.Add(ParseRequiredArgument(name));
+                return limit;
+            }
+
+            if (name == "boxed")
+            {
+                LatexNode border = new LatexNode(LatexNodeKind.BorderBox);
+                border.Children.Add(ParseRequiredArgument(name));
+                return border;
+            }
+
+            if (name == "mathbf" || name == "bm" || name == "boldsymbol" || name == "mathrm" || name == "textrm" ||
+                name == "mathit" || name == "textit" || name == "textbf" || name == "mathsf" || name == "mathtt" ||
+                name == "operatorname" || name == "text")
+            {
+                if (name == "operatorname" && _position < _source.Length && _source[_position] == '*') _position++;
                 LatexNode styled = new LatexNode(LatexNodeKind.Styled);
-                styled.Variant = name == "mathbf" ? MathVariant.Bold :
-                    name == "boldsymbol" ? MathVariant.BoldItalic :
-                    name == "mathit" ? MathVariant.Italic : MathVariant.Plain;
+                styled.Variant = name == "mathbf" || name == "textbf" ? MathVariant.Bold :
+                    name == "boldsymbol" || name == "bm" ? MathVariant.BoldItalic :
+                    name == "mathit" || name == "textit" ? MathVariant.Italic : MathVariant.Plain;
                 styled.Children.Add(ParseRequiredGroup(name));
                 return styled;
             }
 
-            if (name == "mathbb")
+            if (name == "mathbb" || name == "mathcal" || name == "mathscr" || name == "mathfrak")
             {
                 string plain = PlainText(ParseRequiredGroup(name));
-                StringBuilder converted = new StringBuilder();
-                foreach (char letter in plain)
-                {
-                    string replacement;
-                    converted.Append(Blackboard.TryGetValue(letter.ToString(), out replacement) ? replacement : letter.ToString());
-                }
-                return LatexNode.Text(converted.ToString());
+                return LatexNode.Text(ConvertMathematicalAlphabet(plain, name));
             }
 
-            if (name == "sum" || name == "int" || name == "prod" || name == "bigcup" || name == "bigcap")
+            if (name == "sum" || name == "int" || name == "iint" || name == "iiint" || name == "oint" ||
+                name == "prod" || name == "coprod" || name == "bigcup" || name == "bigcap" ||
+                name == "bigvee" || name == "bigwedge" || name == "biguplus")
             {
                 LatexNode nary = new LatexNode(LatexNodeKind.Nary);
-                nary.Value = name == "sum" ? "∑" : name == "int" ? "∫" : name == "prod" ? "∏" : name == "bigcup" ? "⋃" : "⋂";
+                nary.Value = NaryCharacter(name);
                 return nary;
+            }
+
+            if (name == "substack")
+            {
+                return ParseSubstack(name);
+            }
+
+            if (name == "pmod")
+            {
+                LatexNode content = LatexNode.Sequence(new List<LatexNode>
+                {
+                    LatexNode.Text("mod "), ParseRequiredArgument(name)
+                });
+                return CreateDelimiter("(", ")", content);
+            }
+
+            if (name == "mod" || name == "bmod")
+            {
+                LatexNode mod = new LatexNode(LatexNodeKind.Styled);
+                mod.Variant = MathVariant.Plain;
+                mod.Children.Add(LatexNode.Text("mod"));
+                return mod;
+            }
+
+            if (name == "quad" || name == "qquad" || name == "enspace" || name == "enskip" ||
+                name == "thinspace" || name == "medspace" || name == "thickspace")
+            {
+                return LatexNode.Text(name == "qquad" ? "  " : " ");
+            }
+
+            if (name == "limits" || name == "nolimits" || name == "displaystyle" || name == "textstyle" ||
+                name == "scriptstyle" || name == "scriptscriptstyle")
+            {
+                return LatexNode.Text(string.Empty);
+            }
+
+            if (name == "label" || name == "tag" || name == "notag" || name == "nonumber")
+            {
+                if ((name == "label" || name == "tag") && HasGroupArgument()) ParseGroup();
+                return LatexNode.Text(string.Empty);
+            }
+
+            if (name == "hspace")
+            {
+                if (_position < _source.Length && _source[_position] == '*') _position++;
+                if (HasGroupArgument()) ParseGroup();
+                return LatexNode.Text(" ");
+            }
+
+            if (name == "textcolor" || name == "colorbox")
+            {
+                ParseRequiredGroup(name);
+                return ParseRequiredArgument(name);
             }
 
             if (name == "begin")
@@ -281,11 +431,21 @@ namespace AfterMathCore.LatexParser
             string raw = _source.Substring(_position, end - _position);
             _position = end + closing.Length;
 
-            if (environment != "matrix" && environment != "pmatrix" && environment != "bmatrix" &&
-                environment != "cases" && environment != "aligned" && environment != "align")
+            if (environment == "equation" || environment == "equation*" || environment == "displaymath")
+            {
+                return string.IsNullOrWhiteSpace(raw) ? LatexNode.Text(string.Empty) : new LatexParser(raw.Trim()).Parse();
+            }
+
+            if (environment != "matrix" && environment != "smallmatrix" && environment != "pmatrix" &&
+                environment != "bmatrix" && environment != "vmatrix" && environment != "Vmatrix" &&
+                environment != "cases" && environment != "aligned" && environment != "alignedat" &&
+                environment != "gathered" && environment != "split" && environment != "align" &&
+                environment != "align*" && environment != "array")
             {
                 throw Error("暂不支持环境 " + environment);
             }
+
+            if (environment == "array" || environment == "alignedat") raw = StripLeadingGroup(raw);
 
             LatexNode matrix = new LatexNode(LatexNodeKind.Matrix);
             foreach (string rowText in SplitRows(raw))
@@ -298,12 +458,83 @@ namespace AfterMathCore.LatexParser
                 matrix.Children.Add(row);
             }
 
-            if (environment == "matrix" || environment == "aligned" || environment == "align") return matrix;
-            LatexNode delimiterNode = new LatexNode(LatexNodeKind.Delimiter);
-            delimiterNode.Value = environment == "pmatrix" ? "(" : environment == "bmatrix" ? "[" : "{";
-            delimiterNode.Slots["end"] = LatexNode.Text(environment == "pmatrix" ? ")" : environment == "bmatrix" ? "]" : string.Empty);
-            delimiterNode.Children.Add(matrix);
-            return delimiterNode;
+            if (environment == "matrix" || environment == "smallmatrix" || environment == "aligned" ||
+                environment == "alignedat" || environment == "gathered" || environment == "split" ||
+                environment == "align" || environment == "align*" || environment == "array") return matrix;
+            if (environment == "pmatrix") return CreateDelimiter("(", ")", matrix);
+            if (environment == "bmatrix") return CreateDelimiter("[", "]", matrix);
+            if (environment == "vmatrix") return CreateDelimiter("|", "|", matrix);
+            if (environment == "Vmatrix") return CreateDelimiter("‖", "‖", matrix);
+            return CreateDelimiter("{", string.Empty, matrix);
+        }
+
+        private LatexNode ParseLeftRight()
+        {
+            SkipSpaces();
+            if (_position >= _source.Length) throw Error("\\left 缺少定界符");
+            string beginning = ReadDelimiter();
+            LatexNode content = ParseUntil('\0', true);
+            if (!IsCommandAtCurrentPosition("right")) throw Error("\\left 缺少对应的 \\right");
+            _position += "\\right".Length;
+            SkipSpaces();
+            if (_position >= _source.Length) throw Error("\\right 缺少定界符");
+            string ending = ReadDelimiter();
+            return CreateDelimiter(beginning == "." ? string.Empty : beginning, ending == "." ? string.Empty : ending, content);
+        }
+
+        private LatexNode ParseSubstack(string command)
+        {
+            string raw = ReadRawRequiredGroup(command);
+            LatexNode matrix = new LatexNode(LatexNodeKind.Matrix);
+            foreach (string rowText in SplitRows(raw))
+            {
+                LatexNode row = new LatexNode(LatexNodeKind.Sequence);
+                row.Children.Add(string.IsNullOrWhiteSpace(rowText) ? LatexNode.Text(string.Empty) : new LatexParser(rowText.Trim()).Parse());
+                matrix.Children.Add(row);
+            }
+            return matrix;
+        }
+
+        private string ReadRawRequiredGroup(string command)
+        {
+            SkipSpaces();
+            if (_position >= _source.Length || _source[_position] != '{')
+            {
+                throw Error("\\" + command + " 需要大括号参数");
+            }
+
+            int contentStart = ++_position;
+            int level = 1;
+            while (_position < _source.Length)
+            {
+                char current = _source[_position];
+                if (current == '\\' && _position + 1 < _source.Length &&
+                    (_source[_position + 1] == '{' || _source[_position + 1] == '}'))
+                {
+                    _position += 2;
+                    continue;
+                }
+                if (current == '{') level++;
+                if (current == '}')
+                {
+                    level--;
+                    if (level == 0)
+                    {
+                        string result = _source.Substring(contentStart, _position - contentStart);
+                        _position++;
+                        return result;
+                    }
+                }
+                _position++;
+            }
+            throw Error("\\" + command + " 的大括号未闭合");
+        }
+
+        private LatexNode ParseRequiredArgument(string command)
+        {
+            SkipSpaces();
+            if (_position >= _source.Length) throw Error("\\" + command + " 缺少参数");
+            return ParseAtom();
         }
 
         private LatexNode ParseRequiredGroup(string command)
@@ -314,6 +545,33 @@ namespace AfterMathCore.LatexParser
                 throw Error("\\" + command + " 需要大括号参数");
             }
             return ParseGroup();
+        }
+
+        private bool HasGroupArgument()
+        {
+            SkipSpaces();
+            return _position < _source.Length && _source[_position] == '{';
+        }
+
+        private bool IsCommandAtCurrentPosition(string name)
+        {
+            string command = "\\" + name;
+            if (_position + command.Length > _source.Length ||
+                string.Compare(_source, _position, command, 0, command.Length, StringComparison.Ordinal) != 0)
+            {
+                return false;
+            }
+            int next = _position + command.Length;
+            return next >= _source.Length || !char.IsLetter(_source[next]);
+        }
+
+        private static LatexNode CreateDelimiter(string beginning, string ending, LatexNode content)
+        {
+            LatexNode delimiter = new LatexNode(LatexNodeKind.Delimiter);
+            delimiter.Value = beginning;
+            delimiter.Slots["end"] = LatexNode.Text(ending);
+            delimiter.Children.Add(content);
+            return delimiter;
         }
 
         private LatexNode AttachScript(LatexNode basis, char marker, LatexNode script)
@@ -334,6 +592,12 @@ namespace AfterMathCore.LatexParser
         {
             if (_source[_position] != '\\') return _source[_position++].ToString();
             _position++;
+            if (_position >= _source.Length) return string.Empty;
+            if (!char.IsLetter(_source[_position]))
+            {
+                char escaped = _source[_position++];
+                return escaped == '|' ? "‖" : escaped.ToString();
+            }
             int start = _position;
             while (_position < _source.Length && char.IsLetter(_source[_position])) _position++;
             string name = _source.Substring(start, _position - start);
@@ -341,8 +605,82 @@ namespace AfterMathCore.LatexParser
             if (name == "rangle") return "⟩";
             if (name == "lbrace") return "{";
             if (name == "rbrace") return "}";
-            if (name == "vert" || name == "Vert") return "|";
+            if (name == "vert" || name == "lvert" || name == "rvert") return "|";
+            if (name == "Vert" || name == "lVert" || name == "rVert") return "‖";
+            if (name == "lfloor") return "⌊";
+            if (name == "rfloor") return "⌋";
+            if (name == "lceil") return "⌈";
+            if (name == "rceil") return "⌉";
+            if (name == "lbrack") return "[";
+            if (name == "rbrack") return "]";
             return name;
+        }
+
+        private static string NaryCharacter(string name)
+        {
+            if (name == "sum") return "∑";
+            if (name == "int") return "∫";
+            if (name == "iint") return "∬";
+            if (name == "iiint") return "∭";
+            if (name == "oint") return "∮";
+            if (name == "prod") return "∏";
+            if (name == "coprod") return "∐";
+            if (name == "bigcup") return "⋃";
+            if (name == "bigcap") return "⋂";
+            if (name == "bigvee") return "⋁";
+            if (name == "bigwedge") return "⋀";
+            return "⨄";
+        }
+
+        private static string ConvertMathematicalAlphabet(string plain, string command)
+        {
+            StringBuilder converted = new StringBuilder();
+            foreach (char letter in plain)
+            {
+                string replacement;
+                if (command == "mathbb")
+                {
+                    if (Blackboard.TryGetValue(letter.ToString(), out replacement)) converted.Append(replacement);
+                    else if (letter >= 'A' && letter <= 'Z') converted.Append(char.ConvertFromUtf32(0x1D538 + letter - 'A'));
+                    else if (letter >= 'a' && letter <= 'z') converted.Append(char.ConvertFromUtf32(0x1D552 + letter - 'a'));
+                    else if (letter >= '0' && letter <= '9') converted.Append(char.ConvertFromUtf32(0x1D7D8 + letter - '0'));
+                    else converted.Append(letter);
+                    continue;
+                }
+
+                if (command == "mathcal" || command == "mathscr")
+                {
+                    if (ScriptLetters.TryGetValue(letter.ToString(), out replacement)) converted.Append(replacement);
+                    else if (letter >= 'A' && letter <= 'Z') converted.Append(char.ConvertFromUtf32(0x1D49C + letter - 'A'));
+                    else if (letter >= 'a' && letter <= 'z') converted.Append(char.ConvertFromUtf32(0x1D4B6 + letter - 'a'));
+                    else converted.Append(letter);
+                    continue;
+                }
+
+                if (FrakturLetters.TryGetValue(letter.ToString(), out replacement)) converted.Append(replacement);
+                else if (letter >= 'A' && letter <= 'Z') converted.Append(char.ConvertFromUtf32(0x1D504 + letter - 'A'));
+                else if (letter >= 'a' && letter <= 'z') converted.Append(char.ConvertFromUtf32(0x1D51E + letter - 'a'));
+                else converted.Append(letter);
+            }
+            return converted.ToString();
+        }
+
+        private static string StripLeadingGroup(string raw)
+        {
+            int position = 0;
+            while (position < raw.Length && char.IsWhiteSpace(raw[position])) position++;
+            if (position >= raw.Length || raw[position] != '{') return raw;
+            int level = 0;
+            for (int index = position; index < raw.Length; index++)
+            {
+                if (raw[index] == '{') level++;
+                else if (raw[index] == '}')
+                {
+                    level--;
+                    if (level == 0) return raw.Substring(index + 1);
+                }
+            }
+            return raw;
         }
 
         private static IList<string> SplitRows(string raw)

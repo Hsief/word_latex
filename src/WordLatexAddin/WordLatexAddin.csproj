@@ -24,7 +24,7 @@
     <ProductName>WordLatexVSTO</ProductName>
     <PublisherName>WordLatexVSTO contributors</PublisherName>
     <OfficeApplicationDescription>LaTeX 自动转换为 Word 原生公式</OfficeApplicationDescription>
-    <ApplicationVersion>1.0.8.0</ApplicationVersion>
+    <ApplicationVersion>1.0.9.0</ApplicationVersion>
     <PublishUrl>..\..\installer\publish\</PublishUrl>
     <InstallUrl />
     <UpdateEnabled>false</UpdateEnabled>

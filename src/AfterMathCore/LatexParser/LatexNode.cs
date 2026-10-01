@@ -14,7 +14,12 @@ namespace AfterMathCore.LatexParser
         Nary,
         Matrix,
         Delimiter,
-        Styled
+        Styled,
+        Bar,
+        LimitUpper,
+        LimitLower,
+        GroupCharacter,
+        BorderBox
     }
 
     /// <summary>Math style values that map directly to OMML run styles.</summary>

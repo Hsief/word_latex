@@ -63,7 +63,19 @@ c & d
 \end{bmatrix}
 ```
 
-可用环境包括 `matrix`、`pmatrix`、`bmatrix`、`cases`、`aligned` 和 `align`。
+可用环境包括 `matrix`、`smallmatrix`、`pmatrix`、`bmatrix`、`vmatrix`、`Vmatrix`、`cases`、`array`、`aligned`、`alignedat`、`gathered`、`split`、`align` 和 `equation`（包括带 `*` 的常用形式）。
+
+常用结构示例：
+
+```latex
+\dfrac{a}{b}, \binom{n}{k}, \sqrt[3]{x}
+\left\langle x,y\right\rangle, \left\|\mathbf{x}\right\|_2
+\overline{AB}, \underline{x}, \boxed{x+y}
+\overset{!}{=}, \underset{x}{\min}, \underbrace{x_1+\cdots+x_n}_{n\text{ terms}}
+\iint_\Omega f\,dA, \oint_C x\,dx
+```
+
+`\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`，可选次方根，常用重音、箭头、关系符、集合符、逻辑符、圆圈运算符和多重积分均可直接转换。
 
 ## 4. 科研论文写法
 
@@ -73,10 +85,13 @@ c & d
 \boldsymbol{\omega}
 \operatorname{argmin}_{\mathbf{x}}
 \mathrm{diag}(\mathbf{x})
+\bm{\theta}
+\mathbb{R}^{3\times3}
+\mathcal{L}, \mathfrak{g}
 SO(3), SE(3), FMCW, LiDAR, IMU
 ```
 
-`\mathbf` 映射为 Word 粗体数学样式，`\boldsymbol` 映射为粗斜体，`\mathrm` 与 `\operatorname` 映射为正体。常见工程缩写自动使用正体运行样式。
+`\mathbf`/`\textbf` 映射为 Word 粗体数学样式，`\boldsymbol`/`\bm` 映射为粗斜体，`\mathrm`、`\mathsf`、`\mathtt` 与 `\operatorname` 映射为正体。`\mathbb`、`\mathcal`/`\mathscr` 和 `\mathfrak` 使用 Unicode 数学字母，仍然是可编辑文本而非图片。常见工程缩写自动使用正体运行样式。
 
 ## 5. 公式编号
 
@@ -100,7 +115,7 @@ SO(3), SE(3), FMCW, LiDAR, IMU
 
 - 自定义命令和宏包命令
 - `\newcommand`、TikZ、化学公式宏包
-- 完整 TeX 间距与断行算法
+- 完整 TeX 排版、宏展开、间距与断行算法
 - 复杂多行对齐标签
 
 可把复杂公式拆成受支持的基本结构，或先在 Word 公式编辑器中手动完成不支持部分。
