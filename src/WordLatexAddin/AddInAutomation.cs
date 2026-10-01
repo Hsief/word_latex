@@ -19,7 +19,10 @@ namespace WordLatexAddin
         /// <summary>Converts the active Word selection and returns the native-equation count created.</summary>
         public int ConvertCurrentSelection()
         {
-            return _addIn.ConvertCurrentForAutomation().Converted;
+            ConversionSummary summary = _addIn.ConvertCurrentForAutomation();
+            if (summary.Converted == 0 && summary.Errors.Count > 0)
+                throw new InvalidOperationException(summary.ToUserMessage());
+            return summary.Converted;
         }
     }
 }
