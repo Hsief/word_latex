@@ -35,7 +35,8 @@ try {
         -NotAfter (Get-Date).AddYears(2)
 
     & $msbuild (Join-Path $root 'WordLatexVSTO.sln') /restore /t:Rebuild /m `
-        /p:Configuration=Release '/p:Platform=Any CPU' /p:SignManifests=false
+        /p:Configuration=Release '/p:Platform=Any CPU' /p:SignManifests=true `
+        "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
     if ($LASTEXITCODE -ne 0) { throw 'Solution build failed.' }
 
     & (Join-Path $root 'tests\AfterMathCore.Tests\bin\Release\AfterMathCore.Tests.exe')

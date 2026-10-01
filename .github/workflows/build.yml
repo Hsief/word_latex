@@ -43,7 +43,8 @@ jobs:
         run: |
           msbuild WordLatexVSTO.sln /restore /t:Rebuild /m `
             /p:Configuration=Release /p:Platform="Any CPU" `
-            /p:SignManifests=false
+            /p:SignManifests=true `
+            /p:ManifestCertificateThumbprint="${{ steps.certificate.outputs.thumbprint }}"
 
       - name: Run converter and scanner tests
         shell: powershell
