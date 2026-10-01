@@ -29,7 +29,6 @@ RestartApplications=no
 ArchitecturesAllowed=x86compatible x64compatible
 
 [Languages]
-Name: "chs"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Files]
@@ -79,3 +78,4 @@ begin
   if FindWindowByClassName('OpusApp') <> 0 then
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
 end;
+
