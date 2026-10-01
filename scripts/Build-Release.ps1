@@ -1,6 +1,6 @@
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '1.0.4'
+    [string]$Version = '1.0.5'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -44,27 +44,24 @@ try {
 
     & $msbuild (Join-Path $root 'WordLatexVSTO.sln') /restore /t:Rebuild /m `
         /p:Configuration=Release '/p:Platform=Any CPU' /p:SignManifests=true `
+        "/p:ApplicationVersion=$Version.0" `
         "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
     if ($LASTEXITCODE -ne 0) { throw 'Solution build failed.' }
 
     & (Join-Path $root 'tests\AfterMathCore.Tests\bin\Release\AfterMathCore.Tests.exe')
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 
-    & $msbuild (Join-Path $root 'src\WordLatexAddin\WordLatexAddin.csproj') /t:Publish /m `
-        /p:Configuration=Release /p:Platform=AnyCPU "/p:PublishUrl=$staging\" `
-        "/p:ApplicationVersion=$Version.0" /p:SignManifests=true `
-        "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
-    if ($LASTEXITCODE -ne 0) { throw 'VSTO publish failed.' }
-    Copy-Item (Join-Path $root 'src\WordLatexAddin\bin\Release\app.publish\*') $staging -Recurse -Force
-
-    Get-ChildItem (Join-Path $staging 'Application Files') -Recurse -File -Filter '*.deploy' | ForEach-Object {
-        $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
-        Copy-Item -LiteralPath $_.FullName -Destination $target -Force
+    $bin = Join-Path $root 'src\WordLatexAddin\bin\Release'
+    Get-ChildItem $bin -File | Where-Object {
+        $_.Extension -in @('.dll', '.config', '.manifest', '.vsto')
+    } | Copy-Item -Destination $staging -Force
+    foreach ($required in @('WordLatexVSTOAddin.vsto', 'WordLatexVSTOAddin.dll.manifest', 'WordLatexVSTOAddin.dll')) {
+        if (-not (Test-Path (Join-Path $staging $required))) { throw "The flat MSI layout is missing $required." }
     }
-
-    $versionDirectory = Join-Path $staging ("Application Files\WordLatexVSTOAddin_{0}_0" -f $Version.Replace('.', '_'))
-    if (-not (Test-Path (Join-Path $versionDirectory 'WordLatexVSTOAddin.dll'))) {
-        throw 'The local VSTO layout is missing WordLatexVSTOAddin.dll.'
+    [xml]$deploymentManifest = Get-Content (Join-Path $staging 'WordLatexVSTOAddin.vsto') -Raw
+    $applicationCodebase = $deploymentManifest.assembly.dependency.dependentAssembly.codebase
+    if ($applicationCodebase -ne 'WordLatexVSTOAddin.dll.manifest') {
+        throw "Unexpected MSI manifest codebase: $applicationCodebase"
     }
 
     New-Item -ItemType Directory -Path (Join-Path $staging 'docs') -Force | Out-Null

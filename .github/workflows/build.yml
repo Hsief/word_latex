@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  PRODUCT_VERSION: 1.0.4
+  PRODUCT_VERSION: 1.0.5
 
 jobs:
   build:
@@ -43,6 +43,7 @@ jobs:
         run: |
           msbuild WordLatexVSTO.sln /restore /t:Rebuild /m `
             /p:Configuration=Release /p:Platform="Any CPU" `
+            /p:ApplicationVersion="$env:PRODUCT_VERSION.0" `
             /p:SignManifests=true `
             /p:ManifestCertificateThumbprint="${{ steps.certificate.outputs.thumbprint }}"
 
@@ -50,28 +51,29 @@ jobs:
         shell: powershell
         run: .\tests\AfterMathCore.Tests\bin\Release\AfterMathCore.Tests.exe
 
-      - name: Publish VSTO deployment
+      - name: Stage VSTO files for MSI deployment
         shell: powershell
         run: |
           $stage = Join-Path $env:GITHUB_WORKSPACE 'installer\staging'
           Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Path $stage -Force | Out-Null
-          msbuild .\src\WordLatexAddin\WordLatexAddin.csproj /t:Publish /m `
-            /p:Configuration=Release /p:Platform=AnyCPU `
-            "/p:PublishUrl=$stage\" /p:ApplicationVersion="$env:PRODUCT_VERSION.0" `
-            /p:SignManifests=true `
-            /p:ManifestCertificateThumbprint="${{ steps.certificate.outputs.thumbprint }}"
-          Copy-Item .\src\WordLatexAddin\bin\Release\app.publish\* $stage -Recurse -Force
+          $bin = (Resolve-Path .\src\WordLatexAddin\bin\Release).Path
+          Get-ChildItem $bin -File | Where-Object {
+            $_.Extension -in @('.dll', '.config', '.manifest', '.vsto')
+          } | Copy-Item -Destination $stage -Force
           if (-not (Test-Path "$stage\WordLatexVSTOAddin.vsto")) {
             throw 'VSTO deployment manifest was not generated.'
           }
-          Get-ChildItem "$stage\Application Files" -Recurse -File -Filter '*.deploy' | ForEach-Object {
-            $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
-            Copy-Item -LiteralPath $_.FullName -Destination $target -Force
+          if (-not (Test-Path "$stage\WordLatexVSTOAddin.dll.manifest")) {
+            throw 'The VSTO application manifest was not generated.'
           }
-          $versionDirectory = "$stage\Application Files\WordLatexVSTOAddin_$($env:PRODUCT_VERSION.Replace('.', '_'))_0"
-          if (-not (Test-Path "$versionDirectory\WordLatexVSTOAddin.dll")) {
-            throw 'The local VSTO layout is missing WordLatexVSTOAddin.dll.'
+          if (-not (Test-Path "$stage\WordLatexVSTOAddin.dll")) {
+            throw 'The flat MSI layout is missing WordLatexVSTOAddin.dll.'
+          }
+          [xml]$deploymentManifest = Get-Content "$stage\WordLatexVSTOAddin.vsto" -Raw
+          $applicationCodebase = $deploymentManifest.assembly.dependency.dependentAssembly.codebase
+          if ($applicationCodebase -ne 'WordLatexVSTOAddin.dll.manifest') {
+            throw "Unexpected MSI manifest codebase: $applicationCodebase"
           }
           New-Item -ItemType Directory -Path "$stage\docs" -Force | Out-Null
           Copy-Item .\docs\INSTALL.md, .\docs\USER_GUIDE.md "$stage\docs\" -Force

@@ -4,27 +4,41 @@ param(
 
 $ErrorActionPreference = 'Stop'
 if (Get-Process WINWORD -ErrorAction SilentlyContinue) {
-    throw '请先保存文档并关闭所有 Word 窗口，再运行安装验证。'
+    throw 'Close all Word windows before running the installed add-in test.'
 }
 
 $word = $null
 $document = $null
+$wordProcess = $null
 try {
-    $word = New-Object -ComObject Word.Application
+    $wordPath = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot' -ErrorAction Stop).Path
+    $wordProcess = Start-Process -FilePath (Join-Path $wordPath 'WINWORD.EXE') -ArgumentList '/w' -PassThru
+    for ($attempt = 0; $attempt -lt 30 -and $null -eq $word; $attempt++) {
+        Start-Sleep -Milliseconds 500
+        try { $word = [Runtime.InteropServices.Marshal]::GetActiveObject('Word.Application') }
+        catch { }
+    }
+    if ($null -eq $word) { throw 'Word started, but the normal desktop instance was not available.' }
     $word.Visible = $false
-    $addIn = $word.COMAddIns.Item('WordLatexVSTOAddin')
-    if (-not $addIn.Connect) { $addIn.Connect = $true }
-    if (-not $addIn.Connect) { throw 'Word 未能加载 WordLatexVSTOAddin。' }
+    $addIn = $null
+    for ($attempt = 0; $attempt -lt 30; $attempt++) {
+        $addIn = $word.COMAddIns.Item('WordLatexVSTOAddin')
+        if ($addIn.Connect) { break }
+        Start-Sleep -Milliseconds 500
+    }
+    if (-not $addIn.Connect) { throw 'Word did not load WordLatexVSTOAddin during normal startup.' }
 
-    $document = $word.Documents.Add()
+    $document = $word.ActiveDocument
+    if ($null -eq $document) { $document = $word.Documents.Add() }
+    $document.Content.Text = ''
     $word.Selection.TypeText('$E=mc^2$')
     $document.Range(0, $document.Content.End - 1).Select()
 
     $automation = $addIn.Object
-    if ($null -eq $automation) { throw '插件已加载，但未公开自动化验证接口。' }
+    if ($null -eq $automation) { throw 'The add-in loaded but did not expose its verification API.' }
     $converted = $automation.ConvertCurrentSelection()
-    if ($converted -ne 1) { throw "预期转换 1 个公式，实际转换 $converted 个。" }
-    if ($document.OMaths.Count -ne 1) { throw "预期生成 1 个 Word 原生公式，实际为 $($document.OMaths.Count) 个。" }
+    if ($converted -ne 1) { throw "Expected one conversion; received $converted." }
+    if ($document.OMaths.Count -ne 1) { throw "Expected one native Word equation; received $($document.OMaths.Count)." }
 
     if ($OutputDocument) {
         $target = [System.IO.Path]::GetFullPath($OutputDocument)
@@ -43,6 +57,10 @@ try {
 finally {
     if ($document) { $document.Close(0) }
     if ($word) { $word.Quit() }
+    elseif ($wordProcess -and -not $wordProcess.HasExited) {
+        [void]$wordProcess.CloseMainWindow()
+        if (-not $wordProcess.WaitForExit(5000)) { $wordProcess.Kill() }
+    }
     if ($document) { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($document) }
     if ($word) { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($word) }
     [GC]::Collect()
