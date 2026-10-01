@@ -4,7 +4,7 @@
 
 1. 保存文档并关闭所有 Microsoft Word 窗口。
 2. 从项目 Releases 下载 `WordLatexVSTO_Setup.exe`。
-3. 双击安装并同意 Windows 管理员确认；默认安装到 `%ProgramFiles%\WordLatexVSTO`。
+3. 双击安装并同意 Windows 管理员确认；安装器会调用 MSI，默认安装到 `%ProgramFiles%\WordLatexVSTO`。
 4. 打开 Word，在顶部确认出现“论文工具”。
 
 社区构建使用临时自签名证书保护 VSTO 清单完整性，并安装到 Microsoft VSTO 支持的 `Program Files` 受信任位置。安装器不会把社区自签名证书写入系统根证书库。请只安装从本项目 Release 下载且哈希符合发布页的文件；机构环境建议由管理员使用组织证书重新签名。
@@ -30,7 +30,7 @@
 
 ## 升级
 
-关闭 Word，直接运行新版 `WordLatexVSTO_Setup.exe`。安装器使用固定产品 ID，会覆盖程序文件并保留当前用户设置。
+关闭 Word，直接运行新版 `WordLatexVSTO_Setup.exe`。MSI 会自动替换旧版本并保留当前用户设置。
 
 ## 卸载
 

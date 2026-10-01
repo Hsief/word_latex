@@ -7,7 +7,9 @@
 *.cer
 installer/publish/*
 !installer/publish/.gitkeep
+installer/staging/
+installer/setup/obj/
+installer/setup/HarvestedFiles.wxs
 release/
 work/
 TestResults/
-

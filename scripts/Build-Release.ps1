@@ -1,10 +1,11 @@
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '1.0.3'
+    [string]$Version = '1.0.4'
 )
 
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Split-Path -Parent $PSScriptRoot)).Path
+$staging = Join-Path $root 'installer\staging'
 $publish = Join-Path $root 'installer\publish'
 if (-not $publish.StartsWith($root, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'Publish directory must stay inside the repository.'
@@ -24,6 +25,13 @@ $iscc = (Get-Command iscc.exe -ErrorAction SilentlyContinue).Source
 if (-not $iscc) { $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe' }
 if (-not (Test-Path $iscc)) { throw 'Inno Setup 6 was not found.' }
 
+$wix = Get-ChildItem (Join-Path ${env:ProgramFiles(x86)} 'WiX Toolset v3.*\bin\candle.exe') -ErrorAction SilentlyContinue |
+    Sort-Object FullName -Descending | Select-Object -First 1
+if (-not $wix) { throw 'WiX Toolset v3 was not found.' }
+$wixBin = Split-Path $wix.FullName
+
+Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path $staging -Force | Out-Null
 Get-ChildItem $publish -Force | Where-Object { $_.Name -ne '.gitkeep' } | Remove-Item -Recurse -Force
 $cert = $null
 try {
@@ -43,21 +51,42 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 
     & $msbuild (Join-Path $root 'src\WordLatexAddin\WordLatexAddin.csproj') /t:Publish /m `
-        /p:Configuration=Release /p:Platform=AnyCPU "/p:PublishUrl=$publish\" `
+        /p:Configuration=Release /p:Platform=AnyCPU "/p:PublishUrl=$staging\" `
         "/p:ApplicationVersion=$Version.0" /p:SignManifests=true `
         "/p:ManifestCertificateThumbprint=$($cert.Thumbprint)"
     if ($LASTEXITCODE -ne 0) { throw 'VSTO publish failed.' }
-    Copy-Item (Join-Path $root 'src\WordLatexAddin\bin\Release\app.publish\*') $publish -Recurse -Force
+    Copy-Item (Join-Path $root 'src\WordLatexAddin\bin\Release\app.publish\*') $staging -Recurse -Force
 
-    Get-ChildItem (Join-Path $publish 'Application Files') -Recurse -File -Filter '*.deploy' | ForEach-Object {
+    Get-ChildItem (Join-Path $staging 'Application Files') -Recurse -File -Filter '*.deploy' | ForEach-Object {
         $target = $_.FullName.Substring(0, $_.FullName.Length - '.deploy'.Length)
         Copy-Item -LiteralPath $_.FullName -Destination $target -Force
     }
 
-    $versionDirectory = Join-Path $publish ("Application Files\WordLatexAddin_{0}_0" -f $Version.Replace('.', '_'))
-    if (-not (Test-Path (Join-Path $versionDirectory 'WordLatexAddin.dll'))) {
-        throw 'The local VSTO layout is missing WordLatexAddin.dll.'
+    $versionDirectory = Join-Path $staging ("Application Files\WordLatexVSTOAddin_{0}_0" -f $Version.Replace('.', '_'))
+    if (-not (Test-Path (Join-Path $versionDirectory 'WordLatexVSTOAddin.dll'))) {
+        throw 'The local VSTO layout is missing WordLatexVSTOAddin.dll.'
     }
+
+    New-Item -ItemType Directory -Path (Join-Path $staging 'docs') -Force | Out-Null
+    Copy-Item (Join-Path $root 'docs\INSTALL.md'), (Join-Path $root 'docs\USER_GUIDE.md') (Join-Path $staging 'docs') -Force
+    Copy-Item (Join-Path $root 'README.md'), (Join-Path $root 'LICENSE'), (Join-Path $root 'THIRD_PARTY_NOTICES.md') $staging -Force
+
+    $harvest = Join-Path $root 'installer\setup\HarvestedFiles.wxs'
+    $wixObj = Join-Path $root 'installer\setup\obj'
+    Remove-Item $wixObj -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Path $wixObj -Force | Out-Null
+    & (Join-Path $wixBin 'heat.exe') dir $staging -nologo -cg PublishedFiles -dr INSTALLFOLDER `
+        -gg -g1 -sfrag -srd -sreg -var var.PublishDir -out $harvest
+    if ($LASTEXITCODE -ne 0) { throw 'WiX file harvesting failed.' }
+    & (Join-Path $wixBin 'candle.exe') -nologo -arch x64 "-dProductVersion=$Version" `
+        -out (Join-Path $wixObj 'Product.wixobj') (Join-Path $root 'installer\setup\Product.wxs')
+    if ($LASTEXITCODE -ne 0) { throw 'WiX product compilation failed.' }
+    & (Join-Path $wixBin 'candle.exe') -nologo -arch x64 "-dPublishDir=$staging" `
+        -out (Join-Path $wixObj 'HarvestedFiles.wixobj') $harvest
+    if ($LASTEXITCODE -ne 0) { throw 'WiX payload compilation failed.' }
+    & (Join-Path $wixBin 'light.exe') -nologo -out (Join-Path $publish 'WordLatexVSTO.msi') `
+        (Join-Path $wixObj 'Product.wixobj') (Join-Path $wixObj 'HarvestedFiles.wixobj')
+    if ($LASTEXITCODE -ne 0) { throw 'MSI package build failed.' }
 
     & $iscc "/DMyAppVersion=$Version" (Join-Path $root 'installer\setup\WordLatexVSTO.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }

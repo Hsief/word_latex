@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>WordLatexAddin</RootNamespace>
-    <AssemblyName>WordLatexAddin</AssemblyName>
+    <AssemblyName>WordLatexVSTOAddin</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <DefineConstants>VSTO40</DefineConstants>
@@ -24,7 +24,7 @@
     <ProductName>WordLatexVSTO</ProductName>
     <PublisherName>WordLatexVSTO contributors</PublisherName>
     <OfficeApplicationDescription>LaTeX 自动转换为 Word 原生公式</OfficeApplicationDescription>
-    <ApplicationVersion>1.0.3.0</ApplicationVersion>
+    <ApplicationVersion>1.0.4.0</ApplicationVersion>
     <PublishUrl>..\..\installer\publish\</PublishUrl>
     <InstallUrl />
     <UpdateEnabled>false</UpdateEnabled>
@@ -82,6 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddInAutomation.cs" />
     <Compile Include="EquationNumbering.cs" />
     <Compile Include="LatexConverter.cs" />
     <Compile Include="LatexScanner.cs" />

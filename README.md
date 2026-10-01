@@ -59,8 +59,8 @@ WordLatexVSTO/
 │   └── AfterMathCore/        # C# LaTeX 解析器与 OMML 生成器
 ├── tests/AfterMathCore.Tests/
 ├── installer/
-│   ├── setup/                # Inno Setup 安装脚本
-│   └── publish/              # CI 生成的 VSTO 发布文件
+│   ├── setup/                # WiX MSI 与 Inno Setup 启动器
+│   └── publish/              # CI 生成的 MSI/EXE 发布文件
 ├── docs/
 ├── scripts/
 └── WordLatexVSTO.sln
@@ -69,9 +69,9 @@ WordLatexVSTO/
 ## 构建
 
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
-2. 安装 Inno Setup 6。
+2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.0.3`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.0.4`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 
@@ -86,7 +86,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 1. 编译完整 Visual Studio Solution。
 2. 运行转换器和扫描器测试。
 3. 生成已签名的 VSTO 部署清单。
-4. 使用 Inno Setup 生成 `WordLatexVSTO_Setup.exe`。
+4. 使用 WiX 生成真正的 Windows Installer（MSI），再由 Inno Setup 生成 `WordLatexVSTO_Setup.exe`。
 5. 上传 Actions artifact；主分支构建同时创建或更新与 `PRODUCT_VERSION` 对应的 Release。
 
 CI 使用临时自签名证书保护 VSTO 清单完整性。安装器以管理员权限安装到 `Program Files` 的 VSTO 受信任位置，不会向系统根证书库写入社区自签名证书。正式企业分发时，建议通过仓库机密提供组织的代码签名证书。

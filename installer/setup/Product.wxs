@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*"
+           Name="WordLatexVSTO Word 插件"
+           Language="2052"
+           Version="$(var.ProductVersion)"
+           Manufacturer="WordLatexVSTO contributors"
+           UpgradeCode="{6F1A5592-9AC8-48CE-93F3-BB17E878E7FD}">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+    <MajorUpgrade DowngradeErrorMessage="已安装更新版本的 WordLatexVSTO。" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="WordLatexVSTO" />
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="WordAddinRegistry64" Guid="*" Win64="yes">
+        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" Action="createAndRemoveOnUninstall">
+          <RegistryValue Id="Reg64FriendlyName" Name="FriendlyName" Type="string" Value="WordLatexVSTO" />
+          <RegistryValue Id="Reg64Description" Name="Description" Type="string" Value="LaTeX 自动转换为 Word 原生公式" />
+          <RegistryValue Id="Reg64LoadBehavior" Name="LoadBehavior" Type="integer" Value="3" />
+          <RegistryValue Id="Reg64Manifest" Name="Manifest" Type="string" Value="file:///[INSTALLFOLDER]WordLatexVSTOAddin.vsto|vstolocal" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
+      <Component Id="WordAddinRegistry32" Guid="*" Win64="no">
+        <RegistryKey Root="HKLM" Key="Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" Action="createAndRemoveOnUninstall">
+          <RegistryValue Id="Reg32FriendlyName" Name="FriendlyName" Type="string" Value="WordLatexVSTO" />
+          <RegistryValue Id="Reg32Description" Name="Description" Type="string" Value="LaTeX 自动转换为 Word 原生公式" />
+          <RegistryValue Id="Reg32LoadBehavior" Name="LoadBehavior" Type="integer" Value="3" />
+          <RegistryValue Id="Reg32Manifest" Name="Manifest" Type="string" Value="file:///[INSTALLFOLDER]WordLatexVSTOAddin.vsto|vstolocal" KeyPath="yes" />
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="MainFeature" Title="WordLatexVSTO" Level="1">
+      <ComponentGroupRef Id="PublishedFiles" />
+      <ComponentRef Id="WordAddinRegistry64" />
+      <ComponentRef Id="WordAddinRegistry32" />
+    </Feature>
+  </Product>
+</Wix>

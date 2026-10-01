@@ -10,6 +10,7 @@ namespace WordLatexAddin
     public partial class ThisAddIn
     {
         private Timer _automaticTimer;
+        private AddInAutomation _automationObject;
 
         public Settings PluginSettings { get; private set; }
         public LatexConverter Converter { get; private set; }
@@ -18,6 +19,19 @@ namespace WordLatexAddin
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
             return new Ribbon(this);
+        }
+
+        /// <summary>Exposes a small COM-visible surface used by the installer smoke test.</summary>
+        protected override object RequestComAddInAutomationService()
+        {
+            if (_automationObject == null) _automationObject = new AddInAutomation(this);
+            return _automationObject;
+        }
+
+        internal ConversionSummary ConvertCurrentForAutomation()
+        {
+            if (Converter == null) throw new InvalidOperationException("插件尚未完成初始化。");
+            return Converter.ConvertCurrent(Application.Selection);
         }
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
