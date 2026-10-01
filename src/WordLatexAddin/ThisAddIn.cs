@@ -38,6 +38,16 @@ namespace WordLatexAddin
             get { return _ribbonController == null ? string.Empty : _ribbonController.RequestedRibbonId; }
         }
 
+        internal bool ActivateRibbonTab()
+        {
+            return _ribbonController != null && _ribbonController.ActivateMainTab();
+        }
+
+        internal string RibbonActivationError
+        {
+            get { return _ribbonController == null ? "Ribbon 控制器尚未创建。" : _ribbonController.ActivationError; }
+        }
+
         /// <summary>Exposes a small COM-visible surface used by the installer smoke test.</summary>
         protected override object RequestComAddInAutomationService()
         {

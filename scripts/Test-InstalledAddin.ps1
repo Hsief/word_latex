@@ -38,6 +38,8 @@ try {
     if ($null -eq $automation) { throw 'The add-in loaded but did not expose its verification API.' }
     if (-not $automation.RibbonCustomUiRequested) { throw 'Word loaded the add-in but never requested its Ribbon XML.' }
     if (-not $automation.RibbonLoaded) { throw 'Word requested the Ribbon XML, but Office rejected it before the onLoad callback.' }
+    $word.Visible = $true
+    if (-not $automation.ActivateRibbonTab()) { throw "Office loaded the Ribbon but could not activate the custom tab: $($automation.RibbonActivationError)" }
     $converted = $automation.ConvertCurrentSelection()
     if ($converted -ne 1) { throw "Expected one conversion; received $converted." }
     if ($document.OMaths.Count -ne 1) { throw "Expected one native Word equation; received $($document.OMaths.Count)." }
@@ -53,6 +55,7 @@ try {
         AddInConnected = $addIn.Connect
         RibbonCustomUiRequested = $automation.RibbonCustomUiRequested
         RibbonLoaded = $automation.RibbonLoaded
+        RibbonTabActivated = $true
         RequestedRibbonId = $automation.RequestedRibbonId
         Converted = $converted
         NativeOMathCount = $document.OMaths.Count

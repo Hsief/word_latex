@@ -42,5 +42,17 @@ namespace WordLatexAddin
         {
             get { return _addIn.RequestedRibbonId; }
         }
+
+        /// <summary>Activates the custom tab; success proves that Office registered the tab itself.</summary>
+        public bool ActivateRibbonTab()
+        {
+            return _addIn.ActivateRibbonTab();
+        }
+
+        /// <summary>Returns a diagnostic message when the custom tab cannot be activated.</summary>
+        public string RibbonActivationError
+        {
+            get { return _addIn.RibbonActivationError; }
+        }
     }
 }

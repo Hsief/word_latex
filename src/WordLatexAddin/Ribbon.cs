@@ -17,6 +17,7 @@ namespace WordLatexAddin
         internal bool CustomUiRequested { get; private set; }
         internal bool IsLoaded { get; private set; }
         internal string RequestedRibbonId { get; private set; }
+        internal string ActivationError { get; private set; }
 
         public Ribbon(ThisAddIn addIn)
         {
@@ -59,7 +60,8 @@ namespace WordLatexAddin
 
         public bool GetAutomaticMode(Office.IRibbonControl control)
         {
-            return _addIn.PluginSettings.AutomaticConversion;
+            Settings settings = _addIn.PluginSettings;
+            return settings != null && settings.AutomaticConversion;
         }
 
         public void SetAutomaticMode(Office.IRibbonControl control, bool pressed)
@@ -85,6 +87,27 @@ namespace WordLatexAddin
             {
                 _addIn.RefreshAutomaticMode();
                 if (_ribbon != null) _ribbon.Invalidate();
+            }
+        }
+
+        internal bool ActivateMainTab()
+        {
+            ActivationError = string.Empty;
+            if (_ribbon == null)
+            {
+                ActivationError = "Office 尚未调用 Ribbon onLoad。";
+                return false;
+            }
+
+            try
+            {
+                _ribbon.ActivateTab("WordLatexResearchTools");
+                return true;
+            }
+            catch (Exception exception)
+            {
+                ActivationError = exception.Message;
+                return false;
             }
         }
 

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="OnLoad">
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" onLoad="OnLoad">
   <ribbon>
     <tabs>
-      <tab id="WordLatexResearchTools" label="论文工具" insertAfterMso="TabInsert" visible="true">
+      <tab id="WordLatexResearchTools" label="论文工具" insertAfterMso="TabInsert">
         <group id="WordLatexConvertGroup" label="LaTeX 公式">
-          <button id="ConvertCurrent" label="转换当前公式" size="large" onAction="ConvertCurrent" screentip="转换当前选中公式" />
-          <button id="ConvertParagraph" label="转换当前段落" size="large" onAction="ConvertParagraph" />
-          <button id="ConvertDocument" label="转换全文" size="large" onAction="ConvertDocument" />
-          <toggleButton id="AutomaticMode" label="自动模式" size="large" getPressed="GetAutomaticMode" onAction="SetAutomaticMode" />
+          <button id="ConvertCurrent" label="转换当前公式" onAction="ConvertCurrent" />
+          <button id="ConvertParagraph" label="转换当前段落" onAction="ConvertParagraph" />
+          <button id="ConvertDocument" label="转换全文" onAction="ConvertDocument" />
+          <toggleButton id="AutomaticMode" label="自动模式" getPressed="GetAutomaticMode" onAction="SetAutomaticMode" />
         </group>
         <group id="WordLatexNumberGroup" label="论文编号">
-          <button id="NumberEquation" label="公式编号" size="large" onAction="NumberEquation" />
-          <button id="ReferenceEquation" label="引用公式" size="large" onAction="ReferenceEquation" />
+          <button id="NumberEquation" label="公式编号" onAction="NumberEquation" />
+          <button id="ReferenceEquation" label="引用公式" onAction="ReferenceEquation" />
         </group>
         <group id="WordLatexSettingsGroup" label="插件">
-          <button id="OpenSettings" label="插件设置" size="large" onAction="OpenSettings" />
+          <button id="OpenSettings" label="插件设置" onAction="OpenSettings" />
         </group>
       </tab>
     </tabs>
