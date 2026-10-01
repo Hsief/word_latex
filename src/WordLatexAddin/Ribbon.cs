@@ -14,6 +14,10 @@ namespace WordLatexAddin
         private readonly ThisAddIn _addIn;
         private Office.IRibbonUI _ribbon;
 
+        internal bool CustomUiRequested { get; private set; }
+        internal bool IsLoaded { get; private set; }
+        internal string RequestedRibbonId { get; private set; }
+
         public Ribbon(ThisAddIn addIn)
         {
             _addIn = addIn;
@@ -21,7 +25,11 @@ namespace WordLatexAddin
 
         public string GetCustomUI(string ribbonId)
         {
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WordLatexAddin.Ribbon.xml"))
+            CustomUiRequested = true;
+            RequestedRibbonId = ribbonId ?? string.Empty;
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WordLatexAddin.Ribbon.xml");
+            if (stream == null) throw new InvalidOperationException("无法读取内嵌的 Ribbon.xml。 ");
+            using (stream)
             using (StreamReader reader = new StreamReader(stream))
             {
                 return reader.ReadToEnd();
@@ -31,6 +39,7 @@ namespace WordLatexAddin
         public void OnLoad(Office.IRibbonUI ribbonUi)
         {
             _ribbon = ribbonUi;
+            IsLoaded = true;
         }
 
         public void ConvertCurrent(Office.IRibbonControl control)

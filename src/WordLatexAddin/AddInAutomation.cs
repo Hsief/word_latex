@@ -24,5 +24,23 @@ namespace WordLatexAddin
                 throw new InvalidOperationException(summary.ToUserMessage());
             return summary.Converted;
         }
+
+        /// <summary>Reports whether Word requested the embedded Ribbon XML.</summary>
+        public bool RibbonCustomUiRequested
+        {
+            get { return _addIn.RibbonCustomUiRequested; }
+        }
+
+        /// <summary>Reports whether Office accepted the Ribbon XML and called its onLoad callback.</summary>
+        public bool RibbonLoaded
+        {
+            get { return _addIn.RibbonLoaded; }
+        }
+
+        /// <summary>Returns the Office Ribbon identifier supplied to GetCustomUI.</summary>
+        public string RequestedRibbonId
+        {
+            get { return _addIn.RequestedRibbonId; }
+        }
     }
 }

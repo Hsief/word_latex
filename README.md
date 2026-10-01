@@ -71,7 +71,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.0.6`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.0.7`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 

@@ -11,6 +11,7 @@ namespace WordLatexAddin
     {
         private Timer _automaticTimer;
         private AddInAutomation _automationObject;
+        private Ribbon _ribbonController;
 
         public Settings PluginSettings { get; private set; }
         public LatexConverter Converter { get; private set; }
@@ -18,7 +19,23 @@ namespace WordLatexAddin
 
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new Ribbon(this);
+            _ribbonController = new Ribbon(this);
+            return _ribbonController;
+        }
+
+        internal bool RibbonCustomUiRequested
+        {
+            get { return _ribbonController != null && _ribbonController.CustomUiRequested; }
+        }
+
+        internal bool RibbonLoaded
+        {
+            get { return _ribbonController != null && _ribbonController.IsLoaded; }
+        }
+
+        internal string RequestedRibbonId
+        {
+            get { return _ribbonController == null ? string.Empty : _ribbonController.RequestedRibbonId; }
         }
 
         /// <summary>Exposes a small COM-visible surface used by the installer smoke test.</summary>
