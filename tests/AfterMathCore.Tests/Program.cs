@@ -111,6 +111,8 @@ namespace AfterMathCore.Tests
             Assert(spans.Count == 2, "inline and display scanning");
             Assert(!spans[0].IsDisplay && spans[1].IsDisplay, "delimiter classification");
             Assert(scanner.FindAll(@"价格 \$5，不是公式").Count == 0, "escaped dollar");
+            AssertContains(generator.Convert("L_{\\mathrm{h\u200Beight}}"), "height", "zero-width mark inside text");
+            AssertContains(generator.Convert("(\\h\u200Bat{x}\u00A0+\uD835y)"), "<m:acc>", "zero-width mark inside command and lone surrogate");
 
             Console.WriteLine(_failures == 0 ? "All AfterMathCore tests passed." : _failures + " test(s) failed.");
             return _failures == 0 ? 0 : 1;

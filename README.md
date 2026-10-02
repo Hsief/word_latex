@@ -37,7 +37,7 @@ $x_k=f(x_{k-1})$
 
 选中公式并单击“转换当前公式”，或开启“自动模式”后在公式末尾输入空格。结果是 Word 原生公式对象，可双击继续编辑。
 
-需要反向转换时，把光标放进 Word 原生公式，单击“Word 公式转 LaTeX”；行内公式生成 `$...$`，独立公式生成 `\[...\]`，整次操作可用 `Ctrl+Z` 撤销。
+需要反向转换时，把光标放进 Word 原生公式，单击“Word 公式转 LaTeX”；行内公式生成 `$...$`，独立公式生成 `$$...$$`（源码保持在同一行，不额外换行），整次操作可用 `Ctrl+Z` 撤销。
 
 更多示例、编号和引用方法见 [用户指南](docs/USER_GUIDE.md)。
 
@@ -77,7 +77,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.0.0`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.0.1`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 

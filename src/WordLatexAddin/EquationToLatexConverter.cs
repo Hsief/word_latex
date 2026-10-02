@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using AfterMathCore;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -35,9 +36,9 @@ namespace WordLatexAddin
                     EquationTarget target = targets[index];
                     try
                     {
-                        string latex = _converter.Convert(target.Xml);
+                        string latex = Regex.Replace(_converter.Convert(target.Xml), @"\s*[\r\n]+\s*", " ");
                         Word.Range range = document.Range(target.Start, target.End);
-                        range.Text = target.Display ? "\\[\r" + latex + "\r\\]" : "$" + latex + "$";
+                        range.Text = target.Display ? "$$" + latex + "$$" : "$" + latex + "$";
                         summary.Converted++;
                     }
                     catch (Exception exception)

@@ -175,7 +175,9 @@ namespace WordLatexAddin
 
         private static string ShortError(string latex, Exception exception)
         {
-            string source = latex.Length > 36 ? latex.Substring(0, 36) + "…" : latex;
+            string source = latex.Length > 36 ? latex.Substring(0, 36) : latex;
+            if (source.Length > 0 && char.IsHighSurrogate(source[source.Length - 1])) source = source.Substring(0, source.Length - 1);
+            if (source.Length < latex.Length) source += "…";
             return source + " — " + exception.Message;
         }
     }

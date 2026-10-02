@@ -24,7 +24,7 @@
     <ProductName>WordLatexVSTO</ProductName>
     <PublisherName>WordLatexVSTO contributors</PublisherName>
     <OfficeApplicationDescription>LaTeX 与 Word 原生公式双向转换</OfficeApplicationDescription>
-    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <ApplicationVersion>1.0.1.0</ApplicationVersion>
     <PublishUrl>..\..\installer\publish\</PublishUrl>
     <InstallUrl />
     <UpdateEnabled>false</UpdateEnabled>

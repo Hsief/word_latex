@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
 namespace AfterMathCore
 {
@@ -52,7 +54,31 @@ namespace AfterMathCore
                 throw new ArgumentNullException("source");
             }
 
-            return source.Replace("\r\n", "\n").Replace("\r", "\n").Trim();
+            return StripInvisible(source).Replace("\r\n", "\n").Replace("\r", "\n").Trim();
+        }
+
+        // Word text pasted from the web carries zero-width marks, no-break spaces and broken surrogates that split commands like \hat.
+        private static string StripInvisible(string source)
+        {
+            StringBuilder builder = new StringBuilder(source.Length);
+            for (int i = 0; i < source.Length; i++)
+            {
+                char current = source[i];
+                if (char.IsHighSurrogate(current) && i + 1 < source.Length && char.IsLowSurrogate(source[i + 1]))
+                {
+                    if (CharUnicodeInfo.GetUnicodeCategory(source, i) != UnicodeCategory.Format)
+                    {
+                        builder.Append(current).Append(source[i + 1]);
+                    }
+                    i++;
+                    continue;
+                }
+                if (char.IsSurrogate(current)) continue;
+                UnicodeCategory category = char.GetUnicodeCategory(current);
+                if (category == UnicodeCategory.Format) continue;
+                builder.Append(category == UnicodeCategory.SpaceSeparator ? ' ' : current);
+            }
+            return builder.ToString();
         }
 
         public IList<LatexToken> Tokenize()
