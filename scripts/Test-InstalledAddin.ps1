@@ -18,7 +18,7 @@ $document = $null
 $wordProcess = $null
 try {
     $wordPath = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot' -ErrorAction Stop).Path
-    $wordProcess = Start-Process -FilePath (Join-Path $wordPath 'WINWORD.EXE') -ArgumentList '/w' -WindowStyle Hidden -PassThru
+    $wordProcess = Start-Process -FilePath (Join-Path $wordPath 'WINWORD.EXE') -WindowStyle Hidden -PassThru
     for ($attempt = 0; $attempt -lt 30 -and $null -eq $word; $attempt++) {
         Start-Sleep -Milliseconds 500
         try { $word = [Runtime.InteropServices.Marshal]::GetActiveObject('Word.Application') }
