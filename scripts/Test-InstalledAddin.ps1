@@ -3,8 +3,14 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($PSVersionTable.PSEdition -eq 'Core') {
+    throw 'Run this test in Windows PowerShell 5.1; PowerShell 7 does not expose Marshal.GetActiveObject.'
+}
 if (Get-Process WINWORD -ErrorAction SilentlyContinue) {
     throw 'Close all Word windows before running the installed add-in test.'
+}
+if ($OutputDocument -and (Test-Path -LiteralPath $OutputDocument)) {
+    throw 'The test output already exists; choose a new path instead of overwriting a document.'
 }
 
 $word = $null
@@ -12,14 +18,13 @@ $document = $null
 $wordProcess = $null
 try {
     $wordPath = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot' -ErrorAction Stop).Path
-    $wordProcess = Start-Process -FilePath (Join-Path $wordPath 'WINWORD.EXE') -ArgumentList '/w' -PassThru
+    $wordProcess = Start-Process -FilePath (Join-Path $wordPath 'WINWORD.EXE') -ArgumentList '/w' -WindowStyle Hidden -PassThru
     for ($attempt = 0; $attempt -lt 30 -and $null -eq $word; $attempt++) {
         Start-Sleep -Milliseconds 500
         try { $word = [Runtime.InteropServices.Marshal]::GetActiveObject('Word.Application') }
         catch { }
     }
     if ($null -eq $word) { throw 'Word started, but the normal desktop instance was not available.' }
-    $word.Visible = $false
     $addIn = $null
     for ($attempt = 0; $attempt -lt 30; $attempt++) {
         $addIn = $word.COMAddIns.Item('WordLatexVSTOAddin')
@@ -28,9 +33,8 @@ try {
     }
     if (-not $addIn.Connect) { throw 'Word did not load WordLatexVSTOAddin during normal startup.' }
 
-    $document = $word.ActiveDocument
-    if ($null -eq $document) { $document = $word.Documents.Add() }
-    $document.Content.Text = ''
+    # Never use/clear ActiveDocument: a user may open a document while Word starts.
+    $document = $word.Documents.Add()
     $word.Selection.TypeText('$E=mc^2$')
     $document.Range(0, $document.Content.End - 1).Select()
 
@@ -64,11 +68,9 @@ try {
 }
 finally {
     if ($document) { $document.Close(0) }
-    if ($word) { $word.Quit() }
-    elseif ($wordProcess -and -not $wordProcess.HasExited) {
-        [void]$wordProcess.CloseMainWindow()
-        if (-not $wordProcess.WaitForExit(5000)) { $wordProcess.Kill() }
-    }
+    if ($word -and $word.Documents.Count -eq 0) { $word.Quit() }
+    # If COM attachment failed or another document appeared, leave Word alone.
+    # Do not CloseMainWindow/Kill: it could be a user's unsaved document.
     if ($document) { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($document) }
     if ($word) { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($word) }
     [GC]::Collect()

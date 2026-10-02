@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  PRODUCT_VERSION: 1.2.0
+  PRODUCT_VERSION: 1.2.1
 
 jobs:
   build:
@@ -61,6 +61,7 @@ jobs:
           Get-ChildItem $bin -File | Where-Object {
             $_.Extension -in @('.dll', '.config', '.manifest', '.vsto')
           } | Copy-Item -Destination $stage -Force
+          Copy-Item .\tools\WordLatexRepair\bin\Release\WordLatexVSTO_Repair.exe $stage
           if (-not (Test-Path "$stage\WordLatexVSTOAddin.vsto")) {
             throw 'VSTO deployment manifest was not generated.'
           }
@@ -132,6 +133,7 @@ jobs:
           New-Item -ItemType Directory -Path .\release -Force | Out-Null
           Copy-Item .\installer\publish\WordLatexVSTO_Setup.exe, .\installer\publish\WordLatexVSTO.msi .\release\
           Copy-Item .\README.md, .\docs\INSTALL.md, .\docs\USER_GUIDE.md, .\LICENSE, .\THIRD_PARTY_NOTICES.md .\release\
+          Copy-Item .\tools\WordLatexRepair\bin\Release\WordLatexVSTO_Repair.exe .\release\
           Compress-Archive -Path .\release\* -DestinationPath .\WordLatexVSTO-$env:PRODUCT_VERSION.zip -Force
 
       - name: Upload build artifact
@@ -166,7 +168,7 @@ jobs:
             gh release create $tag $assets `
               --target "$env:GITHUB_SHA" `
               --title "WordLatexVSTO $env:PRODUCT_VERSION" `
-              --notes "First stable release. Expanded scientific LaTeX coverage with native editable OMML, matrices and aligned environments, scalable delimiters, annotated arrows, derivatives, quantum notation, automatic mode, and equation numbering."
+              --notes "Fix installer verification and per-user auto-load registration. Setup checks MSI exit codes, repairs stale HKCU registration as the original desktop user, and includes a standalone repair tool. Supports bidirectional native Word equation / LaTeX conversion."
           }
 
       - name: Keep only the stable GitHub release

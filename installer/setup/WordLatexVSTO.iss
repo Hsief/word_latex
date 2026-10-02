@@ -1,5 +1,5 @@
 #ifndef MyAppVersion
-  #define MyAppVersion "1.2.0"
+  #define MyAppVersion "1.2.1"
 #endif
 
 #define MyAppName "WordLatexVSTO"
@@ -23,6 +23,7 @@ SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
 RestartApplications=no
+SetupLogging=yes
 Uninstallable=no
 ArchitecturesAllowed=x64compatible
 
@@ -31,10 +32,6 @@ Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "..\publish\WordLatexVSTO.msi"; DestDir: "{tmp}"; Flags: deleteafterinstall
-
-[Run]
-Filename: "{code:GetLegacyUninstaller}"; Parameters: "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART"; Flags: runhidden waituntilterminated; Check: LegacyUninstallerExists; StatusMsg: "正在移除旧版 WordLatexVSTO..."
-Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\WordLatexVSTO.msi"" /qn /norestart"; Flags: runhidden waituntilterminated; StatusMsg: "正在安装 WordLatexVSTO..."
 
 [Code]
 function GetLegacyUninstaller(Param: String): String;
@@ -72,4 +69,42 @@ begin
   Result := '';
   if FindWindowByClassName('OpusApp') <> 0 then
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
+end;
+
+// MSI failure must not be reported as a successful setup. Repair HKCU under the
+// original desktop user, not whichever account supplied administrator credentials.
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ExitCode: Integer;
+  Manifest: String;
+  RepairPath: String;
+begin
+  if CurStep <> ssPostInstall then Exit;
+  if LegacyUninstallerExists then
+    if not Exec(GetLegacyUninstaller(''), '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '',
+      SW_HIDE, ewWaitUntilTerminated, ExitCode) or (ExitCode <> 0) then
+      RaiseException('旧版卸载失败，退出码：' + IntToStr(ExitCode));
+
+  WizardForm.StatusLabel.Caption := '正在安装并验证 WordLatexVSTO...';
+  if not Exec(ExpandConstant('{sys}\msiexec.exe'),
+    '/i "' + ExpandConstant('{tmp}\WordLatexVSTO.msi') + '" /qn /norestart /L*v "' +
+    ExpandConstant('{tmp}\WordLatexVSTO-msi.log') + '"', '',
+    SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+    RaiseException('无法启动 MSI 安装，错误码：' + IntToStr(ExitCode));
+  Log('MSI exit code: ' + IntToStr(ExitCode));
+  if (ExitCode <> 0) and (ExitCode <> 3010) then
+    RaiseException('MSI 安装失败，退出码：' + IntToStr(ExitCode) + '。日志：' +
+      ExpandConstant('{tmp}\WordLatexVSTO-msi.log'));
+
+  if not RegQueryStringValue(HKLM64,
+    'Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin', 'Manifest', Manifest) then
+    RaiseException('MSI 完成但没有创建 Word 加载项注册项。');
+  RepairPath := ExpandConstant('{pf64}\WordLatexVSTO\WordLatexVSTO_Repair.exe');
+  if not FileExists(RepairPath) then
+    RaiseException('安装缺少当前用户注册修复工具：' + RepairPath);
+  if not ExecAsOriginalUser(RepairPath, '/quiet', '', SW_HIDE, ewWaitUntilTerminated, ExitCode) then
+    RaiseException('无法为原始 Windows 用户设置 Word 自动加载，错误码：' + IntToStr(ExitCode));
+  Log('Original-user registration repair exit code: ' + IntToStr(ExitCode));
+  if ExitCode <> 0 then
+    RaiseException('当前用户注册失败。请关闭 Word，运行 ' + RepairPath + ' 查看具体原因。');
 end;
