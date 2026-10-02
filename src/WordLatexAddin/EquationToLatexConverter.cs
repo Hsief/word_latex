@@ -25,7 +25,18 @@ namespace WordLatexAddin
         {
             if (selection == null) throw new InvalidOperationException("Word 中没有活动选区。");
             Word.Document document = selection.Document;
-            IList<EquationTarget> targets = FindTargets(document, selection.Range);
+            return ConvertTargets(document, FindTargets(document, selection.Range));
+        }
+
+        /// <summary>Converts every native equation in the main document body.</summary>
+        public ConversionSummary ConvertDocument(Word.Document document)
+        {
+            if (document == null) throw new InvalidOperationException("Word 中没有活动文档。");
+            return ConvertTargets(document, FindTargets(document, null));
+        }
+
+        private ConversionSummary ConvertTargets(Word.Document document, IList<EquationTarget> targets)
+        {
             ConversionSummary summary = new ConversionSummary { Found = targets.Count };
             if (targets.Count == 0) return summary;
 
@@ -53,15 +64,16 @@ namespace WordLatexAddin
         private static IList<EquationTarget> FindTargets(Word.Document document, Word.Range selection)
         {
             List<EquationTarget> targets = new List<EquationTarget>();
-            bool collapsed = selection.Start == selection.End;
-            int caret = selection.Start;
+            bool wholeDocument = selection == null;
+            bool collapsed = !wholeDocument && selection.Start == selection.End;
+            int caret = wholeDocument ? 0 : selection.Start;
             for (int index = 1; index <= document.OMaths.Count; index++)
             {
                 Word.OMath equation = document.OMaths[index];
                 Word.Range range = equation.Range;
-                bool selected = collapsed
+                bool selected = wholeDocument || (collapsed
                     ? range.Start <= caret && caret <= range.End
-                    : range.Start < selection.End && range.End > selection.Start;
+                    : range.Start < selection.End && range.End > selection.Start);
                 if (!selected) continue;
                 targets.Add(new EquationTarget
                 {

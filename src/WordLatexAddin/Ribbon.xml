@@ -3,7 +3,7 @@
   <ribbon>
     <tabs>
       <tab id="WordLatexResearchTools" label="论文工具" insertAfterMso="TabInsert">
-        <group id="WordLatexConvertGroup" label="LaTeX 公式">
+        <group id="WordLatexConvertGroup" label="LaTeX 转 Word 公式">
           <button id="ConvertCurrent" label="转换当前公式" onAction="ConvertCurrent" />
           <button id="ConvertParagraph" label="转换当前段落" onAction="ConvertParagraph" />
           <button id="ConvertDocument" label="转换全文" onAction="ConvertDocument" />
@@ -13,8 +13,9 @@
           <button id="NumberEquation" label="公式编号" onAction="NumberEquation" />
           <button id="ReferenceEquation" label="引用公式" onAction="ReferenceEquation" />
         </group>
-        <group id="WordLatexReverseGroup" label="双向转换">
-          <button id="ConvertEquationToLatex" label="Word 公式转 LaTeX" onAction="ConvertEquationToLatex" />
+        <group id="WordLatexReverseGroup" label="Word 公式转 LaTeX">
+          <button id="ConvertEquationToLatex" label="转换当前公式" onAction="ConvertEquationToLatex" />
+          <button id="ConvertDocumentToLatex" label="转换全文" onAction="ConvertDocumentToLatex" />
         </group>
         <group id="WordLatexSettingsGroup" label="插件">
           <button id="OpenSettings" label="插件设置" onAction="OpenSettings" />

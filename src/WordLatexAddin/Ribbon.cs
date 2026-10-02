@@ -64,6 +64,12 @@ namespace WordLatexAddin
                 "没有找到可转换的 Word 原生公式。");
         }
 
+        public void ConvertDocumentToLatex(Office.IRibbonControl control)
+        {
+            RunConversion(delegate { return _addIn.ReverseConverter.ConvertDocument(_addIn.Application.ActiveDocument); },
+                "全文没有找到可转换的 Word 原生公式。");
+        }
+
         public bool GetAutomaticMode(Office.IRibbonControl control)
         {
             Settings settings = _addIn.PluginSettings;
