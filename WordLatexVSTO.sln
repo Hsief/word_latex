@@ -9,18 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLatexAddin", "src\WordL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AfterMathCore.Tests", "tests\AfterMathCore.Tests\AfterMathCore.Tests.csproj", "{6428D197-3F0D-46BE-BFF0-1C868834D9BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLatexRepair", "tools\WordLatexRepair\WordLatexRepair.csproj", "{C6334F0D-0509-4FAB-881D-0821D6860FF3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6334F0D-0509-4FAB-881D-0821D6860FF3}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
-		{C6334F0D-0509-4FAB-881D-0821D6860FF3}.Debug|Any CPU.Build.0 = Debug|AnyCPU
-		{C6334F0D-0509-4FAB-881D-0821D6860FF3}.Release|Any CPU.ActiveCfg = Release|AnyCPU
-		{C6334F0D-0509-4FAB-881D-0821D6860FF3}.Release|Any CPU.Build.0 = Release|AnyCPU
 		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Debug|Any CPU.ActiveCfg = Debug|AnyCPU
 		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Debug|Any CPU.Build.0 = Debug|AnyCPU
 		{E71B6B37-731D-4D6A-A83A-655177B5CF72}.Release|Any CPU.ActiveCfg = Release|AnyCPU

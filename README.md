@@ -25,7 +25,7 @@ WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它在 LaTeX �
 
 从 [Releases](https://github.com/Hsief/word_latex/releases) 下载 `WordLatexVSTO_Setup.exe`，关闭 Word 后双击安装。重新打开 Word，顶部应出现“论文工具”。详见 [安装说明](docs/INSTALL.md)。
 
-1.2.1 修复安装器遗漏当前用户加载注册的问题，检查 MSI 真正的安装结果，并附带 `WordLatexVSTO_Repair.exe`。它只恢复本插件的加载路径与启动注册，不改其他插件和 Office 安全策略。
+安装器会检查 MSI 的真实安装结果，并清理本插件遗留的当前用户（HKCU）加载注册，只保留系统级注册；遗留的当前用户注册会使“论文工具”不显示。不改其他插件和 Office 安全策略。
 
 ## 快速使用
 
@@ -77,7 +77,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.2.1`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.0.0`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 

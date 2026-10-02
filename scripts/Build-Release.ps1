@@ -1,6 +1,6 @@
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '1.2.1'
+    [string]$Version = '1.0.0'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -55,7 +55,6 @@ try {
     Get-ChildItem $bin -File | Where-Object {
         $_.Extension -in @('.dll', '.config', '.manifest', '.vsto')
     } | Copy-Item -Destination $staging -Force
-    Copy-Item (Join-Path $root 'tools\WordLatexRepair\bin\Release\WordLatexVSTO_Repair.exe') $staging
     foreach ($required in @('WordLatexVSTOAddin.vsto', 'WordLatexVSTOAddin.dll.manifest', 'WordLatexVSTOAddin.dll')) {
         if (-not (Test-Path (Join-Path $staging $required))) { throw "The flat MSI layout is missing $required." }
     }

@@ -1,5 +1,5 @@
 #ifndef MyAppVersion
-  #define MyAppVersion "1.2.1"
+  #define MyAppVersion "1.0.0"
 #endif
 
 #define MyAppName "WordLatexVSTO"
@@ -71,13 +71,11 @@ begin
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
 end;
 
-// MSI failure must not be reported as a successful setup. Repair HKCU under the
-// original desktop user, not whichever account supplied administrator credentials.
+// MSI failure must not be reported as a successful setup.
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   ExitCode: Integer;
   Manifest: String;
-  RepairPath: String;
 begin
   if CurStep <> ssPostInstall then Exit;
   if LegacyUninstallerExists then
@@ -99,12 +97,7 @@ begin
   if not RegQueryStringValue(HKLM64,
     'Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin', 'Manifest', Manifest) then
     RaiseException('MSI 完成但没有创建 Word 加载项注册项。');
-  RepairPath := ExpandConstant('{pf64}\WordLatexVSTO\WordLatexVSTO_Repair.exe');
-  if not FileExists(RepairPath) then
-    RaiseException('安装缺少当前用户注册修复工具：' + RepairPath);
-  if not ExecAsOriginalUser(RepairPath, '/quiet', '', SW_HIDE, ewWaitUntilTerminated, ExitCode) then
-    RaiseException('无法为原始 Windows 用户设置 Word 自动加载，错误码：' + IntToStr(ExitCode));
-  Log('Original-user registration repair exit code: ' + IntToStr(ExitCode));
-  if ExitCode <> 0 then
-    RaiseException('当前用户注册失败。请关闭 Word，运行 ' + RepairPath + ' 查看具体原因。');
+  // A per-user Addins key overrides the machine-wide MSI registration and stops the VSTO Ribbon from loading.
+  ExecAsOriginalUser(ExpandConstant('{sys}\reg.exe'), 'delete "HKCU\Software\Microsoft\Office\Word\Addins\WordLatexVSTOAddin" /f /reg:64', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+  ExecAsOriginalUser(ExpandConstant('{sys}\reg.exe'), 'delete "HKCU\Software\Microsoft\Office\Word\Addins\WordLatexAddin" /f /reg:64', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
 end;
