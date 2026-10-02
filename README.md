@@ -85,18 +85,6 @@ WordLatexVSTO/
 powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 ```
 
-## 自动发布
-
-`.github/workflows/build.yml` 在 `windows-2022` 上执行以下流程：
-
-1. 编译完整 Visual Studio Solution。
-2. 运行转换器和扫描器测试。
-3. 生成已签名的 VSTO 部署清单。
-4. 使用 WiX 生成真正的 Windows Installer（MSI），再由 Inno Setup 生成 `WordLatexVSTO_Setup.exe`。
-5. 上传 Actions artifact；主分支构建同时创建或更新与 `PRODUCT_VERSION` 对应的 Release，并只保留当前稳定 Release。
-
-CI 使用临时自签名证书保护 VSTO 清单完整性。安装器以管理员权限安装到 `Program Files` 的 VSTO 受信任位置，不会向系统根证书库写入社区自签名证书。正式企业分发时，建议通过仓库机密提供组织的代码签名证书。
-
 ## AfterMath 集成
 
 `AfterMathCore` 是对开源 [AfterMath](https://github.com/axobase001/aftermath) LaTeX→OMML 核心思路与解析树结构的 C# 移植和扩展。插件不启动 Python、不修改 `.docx` 压缩包，而是把生成的 OMML 直接插入当前 Word 文档。许可和来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
