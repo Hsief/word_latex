@@ -58,6 +58,12 @@ namespace WordLatexAddin
             RunConversion(delegate { return _addIn.Converter.ConvertDocument(_addIn.Application.ActiveDocument); });
         }
 
+        public void ConvertEquationToLatex(Office.IRibbonControl control)
+        {
+            RunConversion(delegate { return _addIn.ReverseConverter.ConvertCurrent(_addIn.Application.Selection); },
+                "没有找到可转换的 Word 原生公式。");
+        }
+
         public bool GetAutomaticMode(Office.IRibbonControl control)
         {
             Settings settings = _addIn.PluginSettings;
@@ -113,12 +119,17 @@ namespace WordLatexAddin
 
         private void RunConversion(Func<ConversionSummary> work)
         {
+            RunConversion(work, "没有找到可转换的 LaTeX 公式。");
+        }
+
+        private void RunConversion(Func<ConversionSummary> work, string emptyMessage)
+        {
             try
             {
                 ConversionSummary summary = work();
                 if (_addIn.PluginSettings.ShowCompletionMessages || summary.Errors.Count > 0)
                 {
-                    MessageBox.Show(summary.Found == 0 ? "没有找到可转换的 LaTeX 公式。" : summary.ToUserMessage(),
+                    MessageBox.Show(summary.Found == 0 ? emptyMessage : summary.ToUserMessage(),
                         "WordLatexVSTO", MessageBoxButtons.OK,
                         summary.Errors.Count == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
                 }

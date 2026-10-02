@@ -1,12 +1,13 @@
 # WordLatexVSTO
 
-WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它把文档中的 LaTeX 公式转换为 Word 内置的可编辑公式（OMML / OMath），不会生成图片，也不依赖 MathType。
+WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它在 LaTeX 与 Word 内置可编辑公式（OMML / OMath）之间双向转换，不会生成图片，也不依赖 MathType。
 
 ## 功能
 
 - 在“论文工具”Ribbon 中转换当前公式、当前段落或全文。
 - 识别 `$...$`、`\(...\)`、`$$...$$` 和 `\[...\]`。
 - 生成真正的 Word `OMath`，可继续在 Word 公式编辑器中修改。
+- 把光标所在或选中的 Word 原生公式反向转换为带定界符的 LaTeX 源码。
 - 自动模式：键入结束符（空格或常见标点）后转换刚输入的公式。
 - 公式编号：使用 Word `SEQ` 域自动编号；使用 `REF` 域插入可更新的引用。
 - 科研排版：粗体向量、粗体希腊字母、矩阵、上下标、算子，以及 `SO(3)`、`SE(3)`、`FMCW`、`LiDAR`、`IMU` 的正体处理。
@@ -34,6 +35,8 @@ $x_k=f(x_{k-1})$
 
 选中公式并单击“转换当前公式”，或开启“自动模式”后在公式末尾输入空格。结果是 Word 原生公式对象，可双击继续编辑。
 
+需要反向转换时，把光标放进 Word 原生公式，单击“Word 公式转 LaTeX”；行内公式生成 `$...$`，独立公式生成 `\[...\]`，整次操作可用 `Ctrl+Z` 撤销。
+
 更多示例、编号和引用方法见 [用户指南](docs/USER_GUIDE.md)。
 
 ## 支持的 LaTeX 子集
@@ -57,7 +60,7 @@ $x_k=f(x_{k-1})$
 WordLatexVSTO/
 ├── src/
 │   ├── WordLatexAddin/       # VSTO、Ribbon、Word 事件、编号与设置
-│   └── AfterMathCore/        # C# LaTeX 解析器与 OMML 生成器
+│   └── AfterMathCore/        # C# LaTeX 解析器、OMML 生成器与反向转换器
 ├── tests/AfterMathCore.Tests/
 ├── installer/
 │   ├── setup/                # WiX MSI 与 Inno Setup 启动器
@@ -72,7 +75,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.1.1`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.2.0`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 

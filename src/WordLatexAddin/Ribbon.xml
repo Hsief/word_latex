@@ -13,6 +13,9 @@
           <button id="NumberEquation" label="公式编号" onAction="NumberEquation" />
           <button id="ReferenceEquation" label="引用公式" onAction="ReferenceEquation" />
         </group>
+        <group id="WordLatexReverseGroup" label="双向转换">
+          <button id="ConvertEquationToLatex" label="Word 公式转 LaTeX" onAction="ConvertEquationToLatex" />
+        </group>
         <group id="WordLatexSettingsGroup" label="插件">
           <button id="OpenSettings" label="插件设置" onAction="OpenSettings" />
         </group>

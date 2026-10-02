@@ -87,6 +87,22 @@ namespace AfterMathCore.Tests
             AssertContains(generator.Convert(@"\mathbbm{1}+\mathds{R}"), "ℝ", "blackboard aliases");
             AssertXml(generator.Convert(@"\begin{aligned}R&=\exp(\hat{\boldsymbol{\omega}}\theta)\\\mathbf{t}&=\int_0^T\mathbf{v}(t)\,dt\end{aligned}"), "robotics equation");
 
+            OmmlToLatexConverter reverse = new OmmlToLatexConverter();
+            AssertContains(reverse.Convert(generator.Convert(@"\frac{a+b}{c}")), @"\frac{a+b}{c}", "OMML fraction to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"x_i^2")), "x_{i}^{2}", "OMML scripts to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\sqrt[3]{x}")), @"\sqrt[3]{x}", "OMML radical to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\sum_{i=1}^{n}x_i")), @"\sum_{i=1}^{n}", "OMML n-ary to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\left(\frac{x}{y}\right)")), @"\left(\frac{x}{y}\right)", "OMML delimiters to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\begin{bmatrix}a&b\\c&d\end{bmatrix}")), @"\begin{bmatrix}", "OMML matrix to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\hat{\mathbf{x}}")), @"\hat{\mathbf{x}}", "OMML accent and bold to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\alpha+\beta=\omega")), @"\alpha", "OMML Greek to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\boxed{x+y}")), @"\boxed{x+y}", "OMML box to LaTeX");
+            AssertContains(reverse.Convert(generator.Convert(@"\operatorname{argmin}_{x}f(x)")), "argmin", "OMML function to LaTeX");
+            AssertContains(reverse.Convert(@"<m:oMath xmlns:m=""http://schemas.openxmlformats.org/officeDocument/2006/math""><m:r><m:t>∈</m:t></m:r><m:r><m:t>R</m:t></m:r></m:oMath>"), @"\in R", "OMML split-run command separator");
+            AssertXml(generator.Convert(reverse.Convert(generator.Convert(@"\frac{\hat{\mathbf{x}}_i}{\sqrt{\alpha+1}}"))), "fraction round trip");
+            AssertXml(generator.Convert(reverse.Convert(generator.Convert(@"\sum_{i=1}^{n}\left\|\mathbf{x}_i\right\|_2"))), "n-ary round trip");
+            AssertXml(generator.Convert(reverse.Convert(generator.Convert(@"\begin{bmatrix}a&b\\c&d\end{bmatrix}"))), "matrix round trip");
+
             IList<LatexToken> tokens = new LatexTokenizer(@"x_i^2+\alpha").Tokenize();
             Assert(tokens.Count > 5, "tokenizer");
 

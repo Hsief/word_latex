@@ -23,8 +23,8 @@
     <FriendlyName>WordLatexVSTO</FriendlyName>
     <ProductName>WordLatexVSTO</ProductName>
     <PublisherName>WordLatexVSTO contributors</PublisherName>
-    <OfficeApplicationDescription>LaTeX 自动转换为 Word 原生公式</OfficeApplicationDescription>
-    <ApplicationVersion>1.1.1.0</ApplicationVersion>
+    <OfficeApplicationDescription>LaTeX 与 Word 原生公式双向转换</OfficeApplicationDescription>
+    <ApplicationVersion>1.2.0.0</ApplicationVersion>
     <PublishUrl>..\..\installer\publish\</PublishUrl>
     <InstallUrl />
     <UpdateEnabled>false</UpdateEnabled>
@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="AddInAutomation.cs" />
     <Compile Include="EquationNumbering.cs" />
+    <Compile Include="EquationToLatexConverter.cs" />
     <Compile Include="LatexConverter.cs" />
     <Compile Include="LatexScanner.cs" />
     <Compile Include="OmmlBuilder.cs" />

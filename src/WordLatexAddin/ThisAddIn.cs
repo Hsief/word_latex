@@ -15,6 +15,7 @@ namespace WordLatexAddin
 
         public Settings PluginSettings { get; private set; }
         public LatexConverter Converter { get; private set; }
+        public EquationToLatexConverter ReverseConverter { get; private set; }
         public EquationNumbering Numbering { get; private set; }
 
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()
@@ -66,6 +67,7 @@ namespace WordLatexAddin
             PluginSettings = Settings.Load();
             LatexScanner scanner = new LatexScanner();
             Converter = new LatexConverter(Application, scanner, new OmmlBuilder(new OmmlGenerator()));
+            ReverseConverter = new EquationToLatexConverter(Application, new OmmlToLatexConverter());
             Numbering = new EquationNumbering(PluginSettings);
 
             _automaticTimer = new Timer();
