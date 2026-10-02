@@ -411,6 +411,16 @@ namespace AfterMathCore.LatexParser
             if (name == "abs" || name == "norm" || name == "floor" || name == "ceil" || name == "avg" ||
                 name == "bra" || name == "ket" || name == "braket" || name == "expval")
             {
+                // Several paper toolchains emit \ceil x\rceil and \floor x\rfloor instead
+                // of the conventional \lceil x\rceil / \lfloor x\rfloor pair.  Keep
+                // supporting the braced semantic macros, but treat an unbraced opening
+                // command as a delimiter alias so the rest of the expression is not
+                // incorrectly consumed as a one-token macro argument.
+                if (!HasGroupArgument() && (name == "ceil" || name == "floor"))
+                {
+                    return LatexNode.Text(name == "ceil" ? "⌈" : "⌊");
+                }
+
                 LatexNode argument = ParseRequiredArgument(name);
                 if (name == "norm") return CreateDelimiter("‖", "‖", argument);
                 if (name == "floor") return CreateDelimiter("⌊", "⌋", argument);
@@ -558,6 +568,14 @@ namespace AfterMathCore.LatexParser
             string symbol;
             if (Greek.TryGetValue(name, out symbol)) return LatexNode.Text(symbol);
             if (Symbols.TryGetValue(name, out symbol)) return LatexNode.Text(symbol);
+            if (name == "lceil") return LatexNode.Text("⌈");
+            if (name == "rceil") return LatexNode.Text("⌉");
+            if (name == "lfloor") return LatexNode.Text("⌊");
+            if (name == "rfloor") return LatexNode.Text("⌋");
+            if (name == "langle") return LatexNode.Text("⟨");
+            if (name == "rangle") return LatexNode.Text("⟩");
+            if (name == "vert" || name == "lvert" || name == "rvert") return LatexNode.Text("|");
+            if (name == "Vert" || name == "lVert" || name == "rVert") return LatexNode.Text("‖");
             if (UprightFunctions.Contains(name))
             {
                 LatexNode function = new LatexNode(LatexNodeKind.Styled);

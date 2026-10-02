@@ -66,6 +66,10 @@ namespace AfterMathCore.Tests
             AssertContains(generator.Convert(@"\dv[2]{f}{x}+\pdv{g}{t}"), "<m:f>", "derivative macros");
             AssertContains(generator.Convert(@"\dv[2]{f}{x}"), "<m:sSup>", "derivative order");
             AssertContains(generator.Convert(@"\abs{x}+\norm{\mathbf{x}}+\floor{y}+\ceil{z}"), "m:val=\"⌊\"", "semantic delimiters");
+            AssertContains(generator.Convert(@"h_l=w_l=\ceil L/\Delta_b\rceil"), "⌈", "bare ceil opening alias");
+            AssertContains(generator.Convert(@"h_l=w_l=\ceil L/\Delta_b\rceil"), "⌉", "bare ceil closing delimiter");
+            AssertContains(generator.Convert(@"D_f=\lceil L_z/\Delta_z\rceil"), "⌉", "standard ceil delimiter pair");
+            AssertContains(generator.Convert(@"q=\floor x\rfloor+\lfloor y\rfloor"), "⌋", "floor delimiter aliases");
             AssertContains(generator.Convert(@"\bra{\psi}+\ket{\phi}+\braket{\phi|\psi}"), "m:val=\"⟨\"", "quantum notation");
             AssertContains(generator.Convert(@"\commutator{A}{B}+\anticommutator{A}{B}"), "m:val=\"[\"", "commutator notation");
             AssertContains(generator.Convert(@"\qty(1+\frac12)"), "<m:d>", "physics quantity delimiter");

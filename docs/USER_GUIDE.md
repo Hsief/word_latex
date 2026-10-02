@@ -78,7 +78,7 @@ c & d
 \bra{\psi}, \ket{\phi}, \braket{\phi|\psi}
 ```
 
-`\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`、`\genfrac`，可选次方根，常用重音、箭头、关系符、集合符、逻辑符、圆圈运算符和多重积分均可直接转换。还兼容 `\abs`、`\norm`、`\floor`、`\ceil`、`\qty`、`\dv`、`\pdv`、`\bra`、`\ket`、`\braket` 和 `\commutator` 等常见科研宏写法。
+`\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`、`\genfrac`，可选次方根，常用重音、箭头、关系符、集合符、逻辑符、圆圈运算符和多重积分均可直接转换。还兼容 `\abs`、`\norm`、`\floor`、`\ceil`、`\qty`、`\dv`、`\pdv`、`\bra`、`\ket`、`\braket` 和 `\commutator` 等常见科研宏写法；同时接受 `\ceil x\rceil`、`\floor x\rfloor` 这类论文工具导出的分隔符别名。
 
 ## 4. 科研论文写法
 
