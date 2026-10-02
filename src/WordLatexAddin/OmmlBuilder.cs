@@ -29,7 +29,8 @@ namespace WordLatexAddin
             try
             {
                 CreateEquationPackage(packagePath, omml);
-                target.Text = string.Empty;
+                // Delete (not Text = "") so LaTeX left inside an old equation object removes that object too.
+                target.Delete();
                 int countBefore = document.OMaths.Count;
                 object bookmark = "Equation";
                 object confirmConversions = false;

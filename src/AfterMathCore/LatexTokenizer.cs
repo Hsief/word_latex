@@ -58,6 +58,7 @@ namespace AfterMathCore
         }
 
         // Word text pasted from the web carries zero-width marks, no-break spaces and broken surrogates that split commands like \hat.
+        // Text read back from a Word equation uses Unicode math italic letters (and U+210E for h); map them to plain ASCII.
         private static string StripInvisible(string source)
         {
             StringBuilder builder = new StringBuilder(source.Length);
@@ -66,11 +67,26 @@ namespace AfterMathCore
                 char current = source[i];
                 if (char.IsHighSurrogate(current) && i + 1 < source.Length && char.IsLowSurrogate(source[i + 1]))
                 {
-                    if (CharUnicodeInfo.GetUnicodeCategory(source, i) != UnicodeCategory.Format)
+                    int codePoint = char.ConvertToUtf32(current, source[i + 1]);
+                    if (codePoint >= 0x1D400 && codePoint <= 0x1D6A3)
+                    {
+                        int offset = (codePoint - 0x1D400) % 52;
+                        builder.Append((char)(offset < 26 ? 'A' + offset : 'a' + offset - 26));
+                    }
+                    else if (codePoint >= 0x1D7CE && codePoint <= 0x1D7FF)
+                    {
+                        builder.Append((char)('0' + (codePoint - 0x1D7CE) % 10));
+                    }
+                    else if (CharUnicodeInfo.GetUnicodeCategory(source, i) != UnicodeCategory.Format)
                     {
                         builder.Append(current).Append(source[i + 1]);
                     }
                     i++;
+                    continue;
+                }
+                if (current == '\u210E')
+                {
+                    builder.Append('h');
                     continue;
                 }
                 if (char.IsSurrogate(current)) continue;

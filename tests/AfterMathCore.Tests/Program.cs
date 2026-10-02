@@ -112,6 +112,7 @@ namespace AfterMathCore.Tests
             Assert(!spans[0].IsDisplay && spans[1].IsDisplay, "delimiter classification");
             Assert(scanner.FindAll(@"价格 \$5，不是公式").Count == 0, "escaped dollar");
             AssertContains(generator.Convert("L_{\\mathrm{h\u200Beight}}"), "height", "zero-width mark inside text");
+            AssertContains(generator.Convert("\U0001D43F_{\\mathrm{\u210E\U0001D452\U0001D456\U0001D454\u210E\U0001D461}}=(\\\u210E\U0001D44E\U0001D461{\U0001D465})"), "<m:acc>", "math italic letters read back from a Word equation");
             AssertContains(generator.Convert("(\\h\u200Bat{x}\u00A0+\uD835y)"), "<m:acc>", "zero-width mark inside command and lone surrogate");
 
             Console.WriteLine(_failures == 0 ? "All AfterMathCore tests passed." : _failures + " test(s) failed.");

@@ -48,8 +48,9 @@ namespace WordLatexAddin
                     try
                     {
                         string latex = Regex.Replace(_converter.Convert(target.Xml), @"\s*[\r\n]+\s*", " ");
-                        Word.Range range = document.Range(target.Start, target.End);
-                        range.Text = target.Display ? "$$" + latex + "$$" : "$" + latex + "$";
+                        // Setting Range.Text keeps the OMath object around the new text; delete the object, then insert plain text.
+                        document.Range(target.Start, target.End).Delete();
+                        document.Range(target.Start, target.Start).InsertAfter(target.Display ? "$$" + latex + "$$" : "$" + latex + "$");
                         summary.Converted++;
                     }
                     catch (Exception exception)
