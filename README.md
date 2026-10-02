@@ -40,13 +40,14 @@ $x_k=f(x_{k-1})$
 
 当前重点支持科研论文常用结构：
 
-- `\frac{a}{b}`、`x_i`、`x^2`、`\sqrt{x}`、`\sqrt[3]{x}`
-- 常用希腊字母、关系符号、箭头、集合符号
-- `\sum`、`\int`、`\prod` 及其上下限
-- `\hat`、`\bar`、`\tilde`、`\vec`、`\dot`、`\ddot`
-- `matrix`、`pmatrix`、`bmatrix`、`cases`、`aligned`
-- `\mathbf`、`\boldsymbol`、`\mathrm`、`\mathit`、`\operatorname`、`\mathbb`
-- `\left` / `\right` 与常见定界符
+- `\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`、`\genfrac`、上下标与可选根指数
+- 完整常用希腊字母集，以及关系、逻辑、集合、箭头、几何和二元运算符
+- `\sum`、`\prod`、`\int`、`\iint`、`\iiint`、`\oint` 等大型运算符及其多行上下限
+- 重音、上下划线、花括号标注、`\overset`、`\underset`、`\prescript`、带标注的长箭头
+- `matrix`、`pmatrix`、`bmatrix`、`Bmatrix`、`vmatrix`、`Vmatrix`、`cases`、`dcases`、`array`、`aligned`、`gather`、`split`、`multline` 等环境
+- `\mathbf`、`\bm`、`\boldsymbol`、`\mathrm`、`\mathit`、`\operatorname`、`\mathbb`、`\mathcal`、`\mathfrak`
+- `\left` / `\middle` / `\right`、`\abs`、`\norm`、`\floor`、`\ceil`、`\bra`、`\ket`、`\braket`
+- `\dv`、`\pdv`、`\commutator`、`\qty` 等常用 physics 写法，以及 `\boxed`、`\textcolor`、矩阵行距与表格线兼容
 
 这不是完整 TeX 引擎。自定义宏、宏包、复杂对齐和部分高级排版命令会保留为原文，并在转换摘要中报告。
 
@@ -71,7 +72,7 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.0.9`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.1.0`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 
@@ -87,7 +88,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 2. 运行转换器和扫描器测试。
 3. 生成已签名的 VSTO 部署清单。
 4. 使用 WiX 生成真正的 Windows Installer（MSI），再由 Inno Setup 生成 `WordLatexVSTO_Setup.exe`。
-5. 上传 Actions artifact；主分支构建同时创建或更新与 `PRODUCT_VERSION` 对应的 Release。
+5. 上传 Actions artifact；主分支构建同时创建或更新与 `PRODUCT_VERSION` 对应的 Release，并只保留当前稳定 Release。
 
 CI 使用临时自签名证书保护 VSTO 清单完整性。安装器以管理员权限安装到 `Program Files` 的 VSTO 受信任位置，不会向系统根证书库写入社区自签名证书。正式企业分发时，建议通过仓库机密提供组织的代码签名证书。
 

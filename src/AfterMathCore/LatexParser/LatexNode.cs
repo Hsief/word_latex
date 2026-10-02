@@ -19,7 +19,8 @@ namespace AfterMathCore.LatexParser
         LimitUpper,
         LimitLower,
         GroupCharacter,
-        BorderBox
+        BorderBox,
+        PreScript
     }
 
     /// <summary>Math style values that map directly to OMML run styles.</summary>

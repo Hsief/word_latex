@@ -20,9 +20,10 @@ namespace AfterMathCore.LatexParser
             { "pi", "π" }, { "varpi", "ϖ" }, { "rho", "ρ" }, { "varrho", "ϱ" },
             { "sigma", "σ" }, { "varsigma", "ς" }, { "tau", "τ" }, { "upsilon", "υ" },
             { "phi", "φ" }, { "varphi", "ϕ" }, { "chi", "χ" }, { "psi", "ψ" }, { "omega", "ω" },
+            { "omicron", "ο" }, { "varkappa", "ϰ" }, { "digamma", "ϝ" },
             { "Gamma", "Γ" }, { "Delta", "Δ" }, { "Theta", "Θ" }, { "Lambda", "Λ" },
             { "Xi", "Ξ" }, { "Pi", "Π" }, { "Sigma", "Σ" }, { "Upsilon", "Υ" },
-            { "Phi", "Φ" }, { "Psi", "Ψ" }, { "Omega", "Ω" }
+            { "Phi", "Φ" }, { "Psi", "Ψ" }, { "Omega", "Ω" }, { "varTheta", "ϴ" }
         };
 
         private static readonly IDictionary<string, string> Symbols = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -47,12 +48,36 @@ namespace AfterMathCore.LatexParser
             { "emptyset", "∅" }, { "varnothing", "∅" }, { "land", "∧" }, { "wedge", "∧" },
             { "lor", "∨" }, { "vee", "∨" }, { "neg", "¬" }, { "lnot", "¬" },
             { "implies", "⇒" }, { "iff", "⇔" }, { "therefore", "∴" }, { "because", "∵" },
+            { "doteq", "≐" }, { "triangleq", "≜" }, { "coloneqq", "≔" }, { "eqqcolon", "≕" },
+            { "asymp", "≍" }, { "bowtie", "⋈" }, { "models", "⊧" }, { "vdash", "⊢" },
+            { "dashv", "⊣" }, { "vDash", "⊨" }, { "Vdash", "⊩" }, { "Vvdash", "⊪" },
+            { "mid", "∣" }, { "nmid", "∤" }, { "nparallel", "∦" },
+            { "lesssim", "≲" }, { "gtrsim", "≳" }, { "lessapprox", "⪅" }, { "gtrapprox", "⪆" },
+            { "subsetneq", "⊊" }, { "supsetneq", "⊋" }, { "sqsubset", "⊏" }, { "sqsupset", "⊐" },
+            { "sqsubseteq", "⊑" }, { "sqsupseteq", "⊒" },
             { "div", "÷" }, { "ast", "∗" }, { "star", "⋆" }, { "circ", "∘" }, { "bullet", "∙" },
             { "oplus", "⊕" }, { "ominus", "⊖" }, { "otimes", "⊗" }, { "oslash", "⊘" }, { "odot", "⊙" },
+            { "circledast", "⊛" }, { "circledcirc", "⊚" }, { "circleddash", "⊝" },
+            { "boxplus", "⊞" }, { "boxminus", "⊟" }, { "boxtimes", "⊠" }, { "boxdot", "⊡" },
+            { "diamond", "⋄" }, { "bigcirc", "◯" }, { "uplus", "⊎" }, { "sqcap", "⊓" }, { "sqcup", "⊔" },
+            { "amalg", "⨿" }, { "wr", "≀" }, { "dagger", "†" }, { "ddagger", "‡" },
+            { "triangleleft", "◁" }, { "triangleright", "▷" }, { "unlhd", "⊴" }, { "unrhd", "⊵" },
             { "triangle", "△" }, { "angle", "∠" }, { "measuredangle", "∡" },
             { "ell", "ℓ" }, { "hbar", "ℏ" }, { "Re", "ℜ" }, { "Im", "ℑ" },
             { "prime", "′" }, { "degree", "°" }, { "top", "⊤" }, { "bot", "⊥" },
-            { "ldots", "…" }, { "dots", "…" }, { "cdots", "⋯" }, { "vdots", "⋮" }, { "ddots", "⋱" }
+            { "aleph", "ℵ" }, { "beth", "ℶ" }, { "gimel", "ℷ" }, { "daleth", "ℸ" },
+            { "imath", "ı" }, { "jmath", "ȷ" }, { "wp", "℘" }, { "mho", "℧" }, { "eth", "ð" },
+            { "complement", "∁" }, { "surd", "√" }, { "backslash", "∖" }, { "colon", ":" },
+            { "flat", "♭" }, { "natural", "♮" }, { "sharp", "♯" }, { "checkmark", "✓" },
+            { "square", "□" }, { "Box", "□" }, { "blacksquare", "■" }, { "lozenge", "◊" },
+            { "clubsuit", "♣" }, { "diamondsuit", "♢" }, { "heartsuit", "♡" }, { "spadesuit", "♠" },
+            { "nearrow", "↗" }, { "searrow", "↘" }, { "swarrow", "↙" }, { "nwarrow", "↖" },
+            { "rightharpoonup", "⇀" }, { "rightharpoondown", "⇁" }, { "leftharpoonup", "↼" },
+            { "leftharpoondown", "↽" }, { "rightleftharpoons", "⇌" }, { "leftrightharpoons", "⇋" },
+            { "leadsto", "⇝" }, { "twoheadrightarrow", "↠" }, { "twoheadleftarrow", "↞" },
+            { "ldots", "…" }, { "dots", "…" }, { "dotsc", "…" }, { "dotsb", "⋯" },
+            { "dotsm", "⋯" }, { "dotsi", "⋯" }, { "dotso", "…" }, { "cdots", "⋯" },
+            { "vdots", "⋮" }, { "ddots", "⋱" }
         };
 
         private static readonly IDictionary<string, string> Blackboard = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -77,7 +102,7 @@ namespace AfterMathCore.LatexParser
             "sin", "cos", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan",
             "sinh", "cosh", "tanh", "coth", "log", "ln", "lg", "exp",
             "min", "max", "sup", "inf", "lim", "limsup", "liminf",
-            "det", "dim", "ker", "rank", "tr", "gcd", "lcm", "Pr", "arg", "hom"
+            "det", "dim", "ker", "rank", "tr", "trace", "diag", "gcd", "lcm", "Pr", "arg", "argmin", "argmax", "hom", "sgn"
         };
 
         private readonly string _source;
@@ -248,7 +273,8 @@ namespace AfterMathCore.LatexParser
                 return LatexNode.Text(_position >= _source.Length ? string.Empty : ReadDelimiter());
             }
 
-            if (name == "frac" || name == "dfrac" || name == "tfrac" || name == "cfrac")
+            if (name == "frac" || name == "dfrac" || name == "tfrac" || name == "cfrac" ||
+                name == "sfrac" || name == "nicefrac")
             {
                 LatexNode fraction = new LatexNode(LatexNodeKind.Fraction);
                 fraction.Children.Add(ParseRequiredArgument(name));
@@ -263,6 +289,20 @@ namespace AfterMathCore.LatexParser
                 fraction.Children.Add(ParseRequiredArgument(name));
                 fraction.Children.Add(ParseRequiredArgument(name));
                 return CreateDelimiter("(", ")", fraction);
+            }
+
+            if (name == "genfrac")
+            {
+                string beginning = PlainText(ParseRequiredGroup(name));
+                string ending = PlainText(ParseRequiredGroup(name));
+                string thickness = PlainText(ParseRequiredGroup(name));
+                ParseRequiredGroup(name); // style selector; Word chooses its own native equation size.
+                LatexNode fraction = new LatexNode(LatexNodeKind.Fraction);
+                if (thickness == "0" || thickness == "0pt") fraction.Value = "noBar";
+                fraction.Children.Add(ParseRequiredArgument(name));
+                fraction.Children.Add(ParseRequiredArgument(name));
+                return string.IsNullOrEmpty(beginning) && string.IsNullOrEmpty(ending)
+                    ? fraction : CreateDelimiter(beginning, ending, fraction);
             }
 
             if (name == "sqrt")
@@ -283,8 +323,9 @@ namespace AfterMathCore.LatexParser
             }
 
             if (name == "hat" || name == "widehat" || name == "bar" || name == "tilde" || name == "widetilde" ||
-                name == "vec" || name == "overrightarrow" || name == "overleftarrow" || name == "dot" || name == "ddot" ||
-                name == "check" || name == "breve" || name == "acute" || name == "grave")
+                name == "vec" || name == "overrightarrow" || name == "overleftarrow" || name == "overleftrightarrow" ||
+                name == "dot" || name == "ddot" || name == "check" || name == "breve" || name == "acute" ||
+                name == "grave" || name == "mathring")
             {
                 LatexNode accent = new LatexNode(LatexNodeKind.Accent);
                 accent.Value = name == "widehat" ? "hat" : name == "widetilde" ? "tilde" : name;
@@ -316,6 +357,27 @@ namespace AfterMathCore.LatexParser
                 return limit;
             }
 
+            if (name == "prescript")
+            {
+                LatexNode script = new LatexNode(LatexNodeKind.PreScript);
+                script.Slots["sup"] = ParseRequiredArgument(name);
+                script.Slots["sub"] = ParseRequiredArgument(name);
+                script.Children.Add(ParseRequiredArgument(name));
+                return script;
+            }
+
+            if (name == "xrightarrow" || name == "xleftarrow" || name == "xleftrightarrow" ||
+                name == "xRightarrow" || name == "xLeftarrow" || name == "xLeftrightarrow" || name == "xmapsto")
+            {
+                LatexNode below = ParseOptionalBracket();
+                LatexNode above = ParseRequiredArgument(name);
+                string arrow = name == "xrightarrow" ? "→" : name == "xleftarrow" ? "←" :
+                    name == "xleftrightarrow" ? "↔" : name == "xRightarrow" ? "⇒" :
+                    name == "xLeftarrow" ? "⇐" : name == "xLeftrightarrow" ? "⇔" : "↦";
+                LatexNode upper = CreateLimit(LatexNodeKind.LimitUpper, LatexNode.Text(arrow), above);
+                return below == null ? upper : CreateLimit(LatexNodeKind.LimitLower, upper, below);
+            }
+
             if (name == "boxed")
             {
                 LatexNode border = new LatexNode(LatexNodeKind.BorderBox);
@@ -323,23 +385,73 @@ namespace AfterMathCore.LatexParser
                 return border;
             }
 
-            if (name == "mathbf" || name == "bm" || name == "boldsymbol" || name == "mathrm" || name == "textrm" ||
-                name == "mathit" || name == "textit" || name == "textbf" || name == "mathsf" || name == "mathtt" ||
-                name == "operatorname" || name == "text")
+            if (name == "mathbf" || name == "bm" || name == "boldsymbol" || name == "symbf" || name == "pmb" || name == "mathbfit" ||
+                name == "mathrm" || name == "textrm" || name == "textnormal" || name == "textup" || name == "mbox" ||
+                name == "mathit" || name == "textit" || name == "textbf" || name == "mathsf" || name == "textsf" ||
+                name == "mathtt" || name == "texttt" ||
+                name == "mathnormal" || name == "operatorname" || name == "text")
             {
                 if (name == "operatorname" && _position < _source.Length && _source[_position] == '*') _position++;
                 LatexNode styled = new LatexNode(LatexNodeKind.Styled);
-                styled.Variant = name == "mathbf" || name == "textbf" ? MathVariant.Bold :
-                    name == "boldsymbol" || name == "bm" ? MathVariant.BoldItalic :
+                styled.Variant = name == "mathbf" || name == "textbf" || name == "pmb" ? MathVariant.Bold :
+                    name == "boldsymbol" || name == "bm" || name == "symbf" || name == "mathbfit" ? MathVariant.BoldItalic :
                     name == "mathit" || name == "textit" ? MathVariant.Italic : MathVariant.Plain;
-                styled.Children.Add(ParseRequiredGroup(name));
+                styled.Children.Add(name == "operatorname" || name == "text" || name == "mbox"
+                    ? ParseRequiredGroup(name) : ParseRequiredArgument(name));
                 return styled;
             }
 
-            if (name == "mathbb" || name == "mathcal" || name == "mathscr" || name == "mathfrak")
+            if (name == "mathbb" || name == "mathbbm" || name == "mathds" || name == "mathcal" || name == "mathscr" || name == "mathfrak")
             {
-                string plain = PlainText(ParseRequiredGroup(name));
-                return LatexNode.Text(ConvertMathematicalAlphabet(plain, name));
+                string plain = PlainText(ParseRequiredArgument(name));
+                string alphabet = name == "mathbbm" || name == "mathds" ? "mathbb" : name;
+                return LatexNode.Text(ConvertMathematicalAlphabet(plain, alphabet));
+            }
+
+            if (name == "abs" || name == "norm" || name == "floor" || name == "ceil" || name == "avg" ||
+                name == "bra" || name == "ket" || name == "braket" || name == "expval")
+            {
+                LatexNode argument = ParseRequiredArgument(name);
+                if (name == "norm") return CreateDelimiter("‖", "‖", argument);
+                if (name == "floor") return CreateDelimiter("⌊", "⌋", argument);
+                if (name == "ceil") return CreateDelimiter("⌈", "⌉", argument);
+                if (name == "avg" || name == "braket" || name == "expval") return CreateDelimiter("⟨", "⟩", argument);
+                if (name == "bra") return CreateDelimiter("⟨", "|", argument);
+                if (name == "ket") return CreateDelimiter("|", "⟩", argument);
+                return CreateDelimiter("|", "|", argument);
+            }
+
+            if (name == "commutator" || name == "anticommutator" || name == "poissonbracket")
+            {
+                LatexNode first = ParseRequiredArgument(name);
+                LatexNode second = ParseRequiredArgument(name);
+                LatexNode content = LatexNode.Sequence(new List<LatexNode> { first, LatexNode.Text(","), second });
+                return name == "commutator" ? CreateDelimiter("[", "]", content) : CreateDelimiter("{", "}", content);
+            }
+
+            if (name == "dv" || name == "odv" || name == "pdv")
+            {
+                return ParseDerivative(name);
+            }
+
+            if (name == "dd" || name == "differential")
+            {
+                LatexNode differential = CreateStyledText("d", MathVariant.Plain);
+                return HasGroupArgument()
+                    ? LatexNode.Sequence(new List<LatexNode> { differential, ParseRequiredArgument(name) })
+                    : differential;
+            }
+
+            if (name == "qty")
+            {
+                return ParseQuantity(name);
+            }
+
+            if (name == "mathop" || name == "mathrel" || name == "mathbin" || name == "mathord" ||
+                name == "mathopen" || name == "mathclose" || name == "mathpunct" || name == "mathinner" ||
+                name == "ensuremath")
+            {
+                return ParseRequiredArgument(name);
             }
 
             if (name == "sum" || name == "int" || name == "iint" || name == "iiint" || name == "oint" ||
@@ -380,7 +492,8 @@ namespace AfterMathCore.LatexParser
             }
 
             if (name == "limits" || name == "nolimits" || name == "displaystyle" || name == "textstyle" ||
-                name == "scriptstyle" || name == "scriptscriptstyle")
+                name == "scriptstyle" || name == "scriptscriptstyle" || name == "rm" || name == "bf" ||
+                name == "it" || name == "cal" || name == "sf" || name == "tt")
             {
                 return LatexNode.Text(string.Empty);
             }
@@ -402,6 +515,39 @@ namespace AfterMathCore.LatexParser
             {
                 ParseRequiredGroup(name);
                 return ParseRequiredArgument(name);
+            }
+
+            if (name == "color")
+            {
+                ParseRequiredGroup(name);
+                return LatexNode.Text(string.Empty);
+            }
+
+            if (name == "multicolumn")
+            {
+                ParseRequiredGroup(name);
+                ParseRequiredGroup(name);
+                return ParseRequiredArgument(name);
+            }
+
+            if (name == "big" || name == "Big" || name == "bigg" || name == "Bigg" ||
+                name == "bigl" || name == "Bigl" || name == "biggl" || name == "Biggl" ||
+                name == "bigr" || name == "Bigr" || name == "biggr" || name == "Biggr" ||
+                name == "bigm" || name == "Bigm" || name == "biggm" || name == "Biggm")
+            {
+                SkipSpaces();
+                return LatexNode.Text(_position >= _source.Length ? string.Empty : ReadDelimiter());
+            }
+
+            if (name == "not")
+            {
+                return ParseNegatedRelation();
+            }
+
+            if (name == "phantom" || name == "hphantom" || name == "vphantom" || name == "smash")
+            {
+                LatexNode hidden = ParseRequiredArgument(name);
+                return name == "smash" ? hidden : LatexNode.Text(" ");
             }
 
             if (name == "begin")
@@ -430,22 +576,29 @@ namespace AfterMathCore.LatexParser
             if (end < 0) throw Error("环境 " + environment + " 未闭合");
             string raw = _source.Substring(_position, end - _position);
             _position = end + closing.Length;
+            string baseEnvironment = environment.EndsWith("*", StringComparison.Ordinal)
+                ? environment.Substring(0, environment.Length - 1) : environment;
 
-            if (environment == "equation" || environment == "equation*" || environment == "displaymath")
+            if (baseEnvironment == "equation" || baseEnvironment == "displaymath")
             {
                 return string.IsNullOrWhiteSpace(raw) ? LatexNode.Text(string.Empty) : new LatexParser(raw.Trim()).Parse();
             }
 
-            if (environment != "matrix" && environment != "smallmatrix" && environment != "pmatrix" &&
-                environment != "bmatrix" && environment != "vmatrix" && environment != "Vmatrix" &&
-                environment != "cases" && environment != "aligned" && environment != "alignedat" &&
-                environment != "gathered" && environment != "split" && environment != "align" &&
-                environment != "align*" && environment != "array")
+            ISet<string> matrixEnvironments = new HashSet<string>(StringComparer.Ordinal)
+            {
+                "matrix", "smallmatrix", "pmatrix", "bmatrix", "Bmatrix", "vmatrix", "Vmatrix",
+                "cases", "dcases", "array", "aligned", "alignedat", "gathered", "split", "align",
+                "gather", "multline", "multlined", "eqnarray"
+            };
+            if (!matrixEnvironments.Contains(baseEnvironment))
             {
                 throw Error("暂不支持环境 " + environment);
             }
 
-            if (environment == "array" || environment == "alignedat") raw = StripLeadingGroup(raw);
+            if (baseEnvironment == "array" || baseEnvironment == "alignedat") raw = StripLeadingGroup(raw);
+            raw = StripLeadingOptionalBracket(raw);
+            raw = Regex.Replace(raw, @"\\(?:hline|toprule|midrule|bottomrule)\b", string.Empty);
+            raw = Regex.Replace(raw, @"\\cline\s*\{[^}]*\}", string.Empty);
 
             LatexNode matrix = new LatexNode(LatexNodeKind.Matrix);
             foreach (string rowText in SplitRows(raw))
@@ -458,14 +611,13 @@ namespace AfterMathCore.LatexParser
                 matrix.Children.Add(row);
             }
 
-            if (environment == "matrix" || environment == "smallmatrix" || environment == "aligned" ||
-                environment == "alignedat" || environment == "gathered" || environment == "split" ||
-                environment == "align" || environment == "align*" || environment == "array") return matrix;
-            if (environment == "pmatrix") return CreateDelimiter("(", ")", matrix);
-            if (environment == "bmatrix") return CreateDelimiter("[", "]", matrix);
-            if (environment == "vmatrix") return CreateDelimiter("|", "|", matrix);
-            if (environment == "Vmatrix") return CreateDelimiter("‖", "‖", matrix);
-            return CreateDelimiter("{", string.Empty, matrix);
+            if (baseEnvironment == "pmatrix") return CreateDelimiter("(", ")", matrix);
+            if (baseEnvironment == "bmatrix") return CreateDelimiter("[", "]", matrix);
+            if (baseEnvironment == "Bmatrix") return CreateDelimiter("{", "}", matrix);
+            if (baseEnvironment == "vmatrix") return CreateDelimiter("|", "|", matrix);
+            if (baseEnvironment == "Vmatrix") return CreateDelimiter("‖", "‖", matrix);
+            if (baseEnvironment == "cases" || baseEnvironment == "dcases") return CreateDelimiter("{", string.Empty, matrix);
+            return matrix;
         }
 
         private LatexNode ParseLeftRight()
@@ -493,6 +645,105 @@ namespace AfterMathCore.LatexParser
                 matrix.Children.Add(row);
             }
             return matrix;
+        }
+
+        private LatexNode ParseDerivative(string command)
+        {
+            LatexNode order = ParseOptionalBracket();
+            LatexNode expression = ParseRequiredArgument(command);
+            LatexNode variable = ParseRequiredArgument(command);
+            string symbol = command == "pdv" ? "∂" : "d";
+            LatexNode numeratorSymbol = CreateStyledText(symbol, MathVariant.Plain);
+            LatexNode denominatorVariable = variable;
+            if (order != null)
+            {
+                numeratorSymbol = AttachScript(numeratorSymbol, '^', order);
+                denominatorVariable = AttachScript(variable, '^', order);
+            }
+
+            LatexNode numerator = LatexNode.Sequence(new List<LatexNode> { numeratorSymbol, expression });
+            LatexNode denominator = LatexNode.Sequence(new List<LatexNode>
+            {
+                CreateStyledText(symbol, MathVariant.Plain), denominatorVariable
+            });
+            LatexNode fraction = new LatexNode(LatexNodeKind.Fraction);
+            fraction.Children.Add(numerator);
+            fraction.Children.Add(denominator);
+            return fraction;
+        }
+
+        private LatexNode ParseQuantity(string command)
+        {
+            SkipSpaces();
+            if (_position >= _source.Length) throw Error("\\" + command + " 缺少参数");
+            if (_source[_position] == '{') return ParseGroup();
+
+            char opening = _source[_position];
+            string closings = opening == '(' ? ")" : opening == '[' ? "]" : opening == '|' ? "|" : string.Empty;
+            if (closings.Length == 0) return ParseAtom();
+            _position++;
+            LatexNode content = ParseUntil(closings[0]);
+            if (_position >= _source.Length || _source[_position] != closings[0]) throw Error("\\qty 定界符未闭合");
+            _position++;
+            return CreateDelimiter(opening.ToString(), closings, content);
+        }
+
+        private LatexNode ParseNegatedRelation()
+        {
+            SkipSpaces();
+            if (_position >= _source.Length) return LatexNode.Text("¬");
+            LatexNode relation;
+            if (_source[_position] == '\\') relation = ParseCommand();
+            else relation = LatexNode.Text(_source[_position++].ToString());
+            string value = PlainText(relation);
+            IDictionary<string, string> negated = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                { "=", "≠" }, { "<", "≮" }, { ">", "≯" }, { "∈", "∉" }, { "∋", "∌" },
+                { "≤", "≰" }, { "≥", "≱" }, { "∼", "≁" }, { "≈", "≉" }, { "≡", "≢" },
+                { "⊂", "⊄" }, { "⊃", "⊅" }, { "⊆", "⊈" }, { "⊇", "⊉" },
+                { "∥", "∦" }, { "∣", "∤" }
+            };
+            string replacement;
+            return LatexNode.Text(negated.TryGetValue(value, out replacement) ? replacement : value + "̸");
+        }
+
+        private LatexNode ParseOptionalBracket()
+        {
+            SkipSpaces();
+            if (_position >= _source.Length || _source[_position] != '[') return null;
+            _position++;
+            int start = _position;
+            int braceLevel = 0;
+            while (_position < _source.Length)
+            {
+                char current = _source[_position];
+                if (current == '{') braceLevel++;
+                else if (current == '}') braceLevel--;
+                else if (current == ']' && braceLevel == 0)
+                {
+                    string raw = _source.Substring(start, _position - start);
+                    _position++;
+                    return string.IsNullOrWhiteSpace(raw) ? LatexNode.Text(string.Empty) : new LatexParser(raw).Parse();
+                }
+                _position++;
+            }
+            throw Error("可选参数未闭合");
+        }
+
+        private static LatexNode CreateLimit(LatexNodeKind kind, LatexNode basis, LatexNode limitValue)
+        {
+            LatexNode limit = new LatexNode(kind);
+            limit.Children.Add(basis);
+            limit.Slots["limit"] = limitValue;
+            return limit;
+        }
+
+        private static LatexNode CreateStyledText(string value, MathVariant variant)
+        {
+            LatexNode styled = new LatexNode(LatexNodeKind.Styled);
+            styled.Variant = variant;
+            styled.Children.Add(LatexNode.Text(value));
+            return styled;
         }
 
         private string ReadRawRequiredGroup(string command)
@@ -683,10 +934,20 @@ namespace AfterMathCore.LatexParser
             return raw;
         }
 
+        private static string StripLeadingOptionalBracket(string raw)
+        {
+            int position = 0;
+            while (position < raw.Length && char.IsWhiteSpace(raw[position])) position++;
+            if (position >= raw.Length || raw[position] != '[') return raw;
+            int end = raw.IndexOf(']', position + 1);
+            return end < 0 ? raw : raw.Substring(end + 1);
+        }
+
         private static IList<string> SplitRows(string raw)
         {
             string normalized = raw.Replace("\r\n", "\n").Replace("\r", "\n");
-            normalized = Regex.Replace(normalized, @"\\\\", "\n");
+            normalized = Regex.Replace(normalized, @"\\\\(?:\s*\[[^\]]*\])?", "\n");
+            normalized = Regex.Replace(normalized, @"\\cr\b", "\n");
             string[] pieces = normalized.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             List<string> rows = new List<string>();
             foreach (string piece in pieces) if (!string.IsNullOrWhiteSpace(piece)) rows.Add(piece.Trim());

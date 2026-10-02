@@ -63,7 +63,7 @@ c & d
 \end{bmatrix}
 ```
 
-可用环境包括 `matrix`、`smallmatrix`、`pmatrix`、`bmatrix`、`vmatrix`、`Vmatrix`、`cases`、`array`、`aligned`、`alignedat`、`gathered`、`split`、`align` 和 `equation`（包括带 `*` 的常用形式）。
+可用环境包括 `matrix`、`smallmatrix`、`pmatrix`、`bmatrix`、`Bmatrix`、`vmatrix`、`Vmatrix`、`cases`、`dcases`、`array`、`aligned`、`alignedat`、`gathered`、`split`、`align`、`gather`、`multline`、`multlined`、`eqnarray` 和 `equation`（包括带 `*` 的常用形式）。可忽略矩阵的可选对齐参数、行距、`\hline`、`\cline` 和 `\multicolumn` 排版指令，同时保留公式内容。
 
 常用结构示例：
 
@@ -73,9 +73,12 @@ c & d
 \overline{AB}, \underline{x}, \boxed{x+y}
 \overset{!}{=}, \underset{x}{\min}, \underbrace{x_1+\cdots+x_n}_{n\text{ terms}}
 \iint_\Omega f\,dA, \oint_C x\,dx
+\prescript{14}{6}{\mathrm{C}}, A\xrightarrow[n\to\infty]{a.s.}B
+\dv[2]{f}{x}, \pdv{f}{x}, \commutator{A}{B}
+\bra{\psi}, \ket{\phi}, \braket{\phi|\psi}
 ```
 
-`\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`，可选次方根，常用重音、箭头、关系符、集合符、逻辑符、圆圈运算符和多重积分均可直接转换。
+`\frac`、`\dfrac`、`\tfrac`、`\cfrac`、`\binom`、`\genfrac`，可选次方根，常用重音、箭头、关系符、集合符、逻辑符、圆圈运算符和多重积分均可直接转换。还兼容 `\abs`、`\norm`、`\floor`、`\ceil`、`\qty`、`\dv`、`\pdv`、`\bra`、`\ket`、`\braket` 和 `\commutator` 等常见科研宏写法。
 
 ## 4. 科研论文写法
 

@@ -87,8 +87,9 @@ namespace AfterMathCore
                 IDictionary<string, string> accents = new Dictionary<string, string>
                 {
                     { "hat", "̂" }, { "bar", "̅" }, { "tilde", "̃" }, { "vec", "⃗" },
-                    { "overrightarrow", "⃗" }, { "overleftarrow", "⃖" }, { "dot", "̇" }, { "ddot", "̈" },
-                    { "check", "̌" }, { "breve", "̆" }, { "acute", "́" }, { "grave", "̀" }
+                    { "overrightarrow", "⃗" }, { "overleftarrow", "⃖" }, { "overleftrightarrow", "⃡" },
+                    { "dot", "̇" }, { "ddot", "̈" }, { "check", "̌" }, { "breve", "̆" },
+                    { "acute", "́" }, { "grave", "̀" }, { "mathring", "̊" }
                 };
                 XElement accent = new XElement(M + "acc",
                     new XElement(M + "accPr", new XElement(M + "chr", new XAttribute(M + "val", accents[node.Value]))));
@@ -190,6 +191,20 @@ namespace AfterMathCore
                 AppendNode(element, node.Children[0], inheritedVariant);
                 box.Add(element);
                 parent.Add(box);
+                return;
+            }
+            if (node.Kind == LatexNodeKind.PreScript)
+            {
+                XElement script = new XElement(M + "sPre");
+                XElement sub = new XElement(M + "sub");
+                XElement sup = new XElement(M + "sup");
+                XElement basis = new XElement(M + "e");
+                LatexNode slot;
+                if (node.Slots.TryGetValue("sub", out slot)) AppendNode(sub, slot, inheritedVariant);
+                if (node.Slots.TryGetValue("sup", out slot)) AppendNode(sup, slot, inheritedVariant);
+                AppendNode(basis, node.Children[0], inheritedVariant);
+                script.Add(sub, sup, basis);
+                parent.Add(script);
                 return;
             }
 
