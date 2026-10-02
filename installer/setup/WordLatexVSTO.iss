@@ -71,6 +71,28 @@ begin
     Result := 'Microsoft Word 正在运行。请保存文档并关闭所有 Word 窗口，然后重新单击“安装”。';
 end;
 
+function MsiEnumRelatedProducts(UpgradeCode: String; Reserved: Cardinal; Index: Cardinal; ProductCode: String): Cardinal;
+  external 'MsiEnumRelatedProductsW@msi.dll stdcall';
+
+// Windows Installer costs files before removing the old product, so a lower version is silently skipped.
+// Uninstall every installed WordLatexVSTO product first and install fresh.
+procedure UninstallRelatedProducts();
+var
+  ProductCode: String;
+  ExitCode, Guard: Integer;
+begin
+  for Guard := 1 to 10 do
+  begin
+    ProductCode := '';
+    SetLength(ProductCode, 39);
+    if MsiEnumRelatedProducts('{6F1A5592-9AC8-48CE-93F3-BB17E878E7FD}', 0, 0, ProductCode) <> 0 then Exit;
+    ProductCode := Copy(ProductCode, 1, 38);
+    if not Exec(ExpandConstant('{sys}\msiexec.exe'), '/x ' + ProductCode + ' /qn /norestart', '',
+      SW_HIDE, ewWaitUntilTerminated, ExitCode) or ((ExitCode <> 0) and (ExitCode <> 3010)) then
+      RaiseException('旧版 WordLatexVSTO 卸载失败，退出码：' + IntToStr(ExitCode));
+  end;
+end;
+
 // MSI failure must not be reported as a successful setup.
 procedure CurStepChanged(CurStep: TSetupStep);
 var
@@ -82,6 +104,8 @@ begin
     if not Exec(GetLegacyUninstaller(''), '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '',
       SW_HIDE, ewWaitUntilTerminated, ExitCode) or (ExitCode <> 0) then
       RaiseException('旧版卸载失败，退出码：' + IntToStr(ExitCode));
+
+  UninstallRelatedProducts();
 
   WizardForm.StatusLabel.Caption := '正在安装并验证 WordLatexVSTO...';
   if not Exec(ExpandConstant('{sys}\msiexec.exe'),
