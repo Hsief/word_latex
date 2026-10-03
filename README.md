@@ -1,6 +1,6 @@
 # WordLatexVSTO
 
-WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它在 LaTeX 与 Word 内置可编辑公式（OMML / OMath）之间双向转换，不会生成图片，也不依赖 MathType。
+WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它在 LaTeX 与 Word 内置可编辑公式（OMML / OMath）之间双向转换，参考了aftermath项目。
 
 ## 功能
 
@@ -35,7 +35,7 @@ WordLatexVSTO 是面向 Windows Microsoft Word 的 VSTO 插件。它在 LaTeX �
 $x_k=f(x_{k-1})$
 ```
 
-选中公式并单击“转换当前公式”，或开启“自动模式”后在公式末尾输入空格。结果是 Word 原生公式对象，可双击继续编辑。
+选中公式并单击“转换当前公式”，或开启“自动模式”后在公式末尾输入空格（自动模式还没开始开发）。结果是 Word 原生公式对象，可双击继续编辑。
 
 需要反向转换时，把光标放进 Word 原生公式，单击“Word 公式转 LaTeX”；行内公式生成 `$...$`，独立公式生成 `$$...$$`（源码保持在同一行，不额外换行），整次操作可用 `Ctrl+Z` 撤销。
 
@@ -87,7 +87,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 
 ## AfterMath 集成
 
-`AfterMathCore` 是对开源 [AfterMath](https://github.com/axobase001/aftermath) LaTeX→OMML 核心思路与解析树结构的 C# 移植和扩展。插件不启动 Python、不修改 `.docx` 压缩包，而是把生成的 OMML 直接插入当前 Word 文档。许可和来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+`AfterMathCore` 是对开源 [AfterMath](https://github.com/axobase001/aftermath) LaTeX→OMML 核心思路与解析树结构的 C# 移植和扩展。插件把生成的 OMML 直接插入当前 Word 文档。许可和来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 许可
 
