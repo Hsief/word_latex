@@ -96,7 +96,8 @@ namespace WordLatexAddin
 
         private void ApplicationWindowSelectionChange(Word.Selection selection)
         {
-            if (!PluginSettings.AutomaticConversion || Converter == null || Converter.IsBusy) return;
+            if (!PluginSettings.AutomaticConversion || Converter == null || Converter.IsBusy ||
+                (ReverseConverter != null && ReverseConverter.IsBusy)) return;
             _automaticTimer.Stop();
             _automaticTimer.Start();
         }
@@ -104,7 +105,8 @@ namespace WordLatexAddin
         private void AutomaticTimerTick(object sender, EventArgs e)
         {
             _automaticTimer.Stop();
-            if (!PluginSettings.AutomaticConversion || Converter == null || Converter.IsBusy) return;
+            if (!PluginSettings.AutomaticConversion || Converter == null || Converter.IsBusy ||
+                (ReverseConverter != null && ReverseConverter.IsBusy)) return;
             try { Converter.TryAutoConvert(Application.Selection); }
             catch { }
         }
