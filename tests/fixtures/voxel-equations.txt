@@ -1,0 +1,11 @@
+体素示例用于检查中文正文与公式的边界。测试标记📐应保持原样。
+设三个方向的范围跨度分别为 $L_x$、$L_y$ 和 $L_z$，网格步长为 \(\Delta_x\)、\(\Delta_y\) 和 \(\Delta_z\)。
+逻辑网格尺寸记为 $D$、$H$ 和 $W$，计算如下。
+$$
+D=\lceil L_z/\Delta_z\rceil,\quad H=\lceil L_y/\Delta_y\rceil,\quad W=\lceil L_x/\Delta_x\rceil
+$$
+非空体素集合记为 $\mathcal{V}_t$。对于体素 $v$，点集为 $\mathcal{P}_v$，中心为 \((x_v,y_v,z_v)\)，归一化回波强度为 $I_i$。
+\[
+\mathbf{f}_i=\left[I_i,\frac{x_i-x_v}{\Delta_x},\frac{y_i-y_v}{\Delta_y},\frac{z_i-z_v}{\Delta_z}\right]
+\]
+局部特征用于后续编码。该段完整正文、标点及段落边界都应保留。

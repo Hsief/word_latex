@@ -115,8 +115,122 @@ namespace AfterMathCore.Tests
             AssertContains(generator.Convert("\U0001D43F_{\\mathrm{\u210E\U0001D452\U0001D456\U0001D454\u210E\U0001D461}}=(\\\u210E\U0001D44E\U0001D461{\U0001D465})"), "<m:acc>", "math italic letters read back from a Word equation");
             AssertContains(generator.Convert("(\\h\u200Bat{x}\u00A0+\uD835y)"), "<m:acc>", "zero-width mark inside command and lone surrogate");
 
+            TestScannerRegressions(scanner);
+            TestVoxelDocument(scanner, generator);
+
             Console.WriteLine(_failures == 0 ? "All AfterMathCore tests passed." : _failures + " test(s) failed.");
             return _failures == 0 ? 0 : 1;
+        }
+
+        private static void TestScannerRegressions(LatexScanner scanner)
+        {
+            AssertFormulaSpans(scanner, "$$broken $x$", new[] { "x" }, new[] { false },
+                "incomplete display opener does not consume prose as inline math");
+            AssertFormulaSpans(scanner, "$broken $$x$$", new[] { "x" }, new[] { true },
+                "inline opener does not consume half of a display delimiter");
+            AssertFormulaSpans(scanner, "$x$$y$", new[] { "x", "y" }, new[] { false, false },
+                "adjacent inline equations keep both delimiter pairs");
+            AssertFormulaSpans(scanner, "$x$$y$$z$", new[] { "x", "y", "z" }, new[] { false, false, false },
+                "adjacent inline chain keeps every delimiter pair");
+            AssertFormulaSpans(scanner, "$$x$$$$y$$", new[] { "x", "y" }, new[] { true, true },
+                "adjacent display equations keep both delimiter pairs");
+            // All eight inline/display combinations exercise the one-, two- and
+            // three-dollar boundaries produced by adjacent reverse conversions.
+            for (int mask = 0; mask < 8; mask++)
+            {
+                string source = string.Empty;
+                string[] expressions = { "x", "y", "z" };
+                bool[] modes = new bool[3];
+                for (int index = 0; index < 3; index++)
+                {
+                    modes[index] = (mask & (1 << index)) != 0;
+                    string delimiter = modes[index] ? "$$" : "$";
+                    source += delimiter + expressions[index] + delimiter;
+                }
+                AssertFormulaSpans(scanner, source, expressions, modes, "adjacent mixed delimiter combination " + mask);
+            }
+            AssertFormulaSpans(scanner, "$$x\r\ny$$", new[] { "x\r\ny" }, new[] { true },
+                "display equation may span paragraphs");
+            AssertFormulaSpans(scanner, "$x\vy$", new[] { "x\vy" }, new[] { false },
+                "inline equation may contain a Word manual line break");
+            AssertFormulaSpans(scanner, "$x\ry$", new string[0], new bool[0],
+                "inline equation does not span paragraphs");
+            AssertFormulaSpans(scanner, "$$x\r\ay$$", new string[0], new bool[0],
+                "display equation cannot consume two Word table cells");
+            AssertFormulaSpans(scanner, "\\[x\r\ay\\]", new string[0], new bool[0],
+                "bracket display cannot consume two Word table cells");
+            AssertFormulaSpans(scanner, @"成本 \$5，$x+\$5$ 和 \(y\)，\[z\]。",
+                new[] { @"x+\$5", "y", "z" }, new[] { false, false, true },
+                "escaped dollars and all bracket delimiters");
+            AssertFormulaSpans(scanner, @"$$\text{cost \$5}+x$$", new[] { @"\text{cost \$5}+x" }, new[] { true },
+                "escaped dollar inside a display is literal");
+
+            string pasted = "前文\U0001F4D0&#x20;\u00a0$L_{\\mathrm{h\u200beight}}$，尾文";
+            IList<LatexSpan> pastedSpans = scanner.FindAll(pasted);
+            Assert(pastedSpans.Count == 1 && pastedSpans[0].Start == pasted.IndexOf('$') &&
+                pasted.Substring(pastedSpans[0].Start, pastedSpans[0].Length) == "$L_{\\mathrm{h\u200beight}}$",
+                "scanner keeps original UTF-16 offsets and invisible characters");
+
+            bool display;
+            Assert(scanner.RemoveDelimiters("  $$x+y$$\r\a", out display) == "x+y" && display,
+                "selection delimiter removal trims the Word cell terminator");
+            Assert(scanner.RemoveDelimiters(@"\(x+y\)", out display) == "x+y" && !display,
+                "selection bracket delimiters");
+            Assert(scanner.RemoveDelimiters(@"\frac{a}{b}", out display) == @"\frac{a}{b}" && !display,
+                "raw selected LaTeX is preserved");
+            Assert(scanner.RemoveDelimiters(@"\text{cost \$5}", out display) == @"\text{cost \$5}",
+                "literal escaped dollars in a raw selection are preserved");
+            foreach (string malformed in new[] { "$$x$", "$x$$", "$x", @"\[x", @"x\)" })
+            {
+                bool rejected = false;
+                try { scanner.RemoveDelimiters(malformed, out display); }
+                catch (FormatException) { rejected = true; }
+                Assert(rejected, "malformed selected delimiters are rejected: " + malformed);
+            }
+        }
+
+        private static void TestVoxelDocument(LatexScanner scanner, OmmlGenerator generator)
+        {
+            string document =
+                "设三维监测空间的物理范围跨度分别为 $L_x$、$L_y$、$L_z$，粗体素网格步长为 " +
+                "$\\Delta_x$、$\\Delta_y$、$\\Delta_z$，逻辑空间尺寸记为 $D$、$H$、$W$。\r" +
+                "$$\r D=\\lceil L_z/\\Delta_z\\rceil,\\quad H=\\lceil L_y/\\Delta_y\\rceil," +
+                "\\quad W=\\lceil L_x/\\Delta_x\\rceil\r$$\r" +
+                "设有效非空体素集合为 $\\mathcal{V}_t$。对于任意非空体素 $v$，原始点集记为 " +
+                "$\\mathcal{P}_v$，几何中心记为 $(x_v,y_v,z_v)$，归一化回波强度为 $I_i$。" +
+                "绝对物理坐标仅用于生成稀疏体素网格索引与最终坐标解码。\r" +
+                "\\[\\mathbf{f}_i=\\left[I_i,\\frac{x_i-x_v}{\\Delta_x}," +
+                "\\frac{y_i-y_v}{\\Delta_y},\\frac{z_i-z_v}{\\Delta_z}\\right]\\]";
+            IList<LatexSpan> spans = scanner.FindAll(document);
+            Assert(spans.Count == 16, "voxel paragraph finds every inline and display equation");
+            XNamespace math = OmmlGenerator.MathNamespace;
+            foreach (LatexSpan span in spans)
+            {
+                XElement equation = XElement.Parse(generator.Convert(span.Latex));
+                bool clean = true;
+                foreach (XElement text in equation.Descendants(math + "t"))
+                {
+                    clean &= text.Value.IndexOf('$') < 0 && text.Value.IndexOf('\\') < 0;
+                }
+                Assert(clean, "voxel equation contains no leftover delimiters or LaTeX commands: " + span.Latex);
+            }
+        }
+
+        private static void AssertFormulaSpans(LatexScanner scanner, string source, string[] expected, bool[] display, string name)
+        {
+            IList<LatexSpan> spans = scanner.FindAll(source);
+            Assert(spans.Count == expected.Length, name + " count");
+            int count = Math.Min(spans.Count, expected.Length);
+            for (int i = 0; i < count; i++)
+            {
+                Assert(spans[i].Latex == expected[i] && spans[i].IsDisplay == display[i], name + " content " + i);
+                string original = source.Substring(spans[i].Start, spans[i].Length);
+                string opening = spans[i].IsDisplay ? (original.StartsWith("$$", StringComparison.Ordinal) ? "$$" : @"\[") :
+                    (original.StartsWith("$", StringComparison.Ordinal) ? "$" : @"\(");
+                string closing = opening == @"\[" ? @"\]" : opening == @"\(" ? @"\)" : opening;
+                Assert(original.StartsWith(opening, StringComparison.Ordinal) && original.EndsWith(closing, StringComparison.Ordinal),
+                    name + " complete source range " + i);
+            }
         }
 
         private static void AssertContains(string actual, string expected, string name)

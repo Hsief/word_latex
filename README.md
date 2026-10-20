@@ -77,13 +77,15 @@ WordLatexVSTO/
 1. 安装 Visual Studio 2022，选择“.NET 桌面开发”和“Office/SharePoint 开发”。
 2. 安装 WiX Toolset v3 和 Inno Setup 6。
 3. 打开 `WordLatexVSTO.sln`，选择 `Release | Any CPU` 并生成。
-4. 执行 `scripts\Build-Release.ps1 -Version 1.1.1`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
+4. 执行 `scripts\Build-Release.ps1 -Version 1.1.2`，安装包输出到 `installer\publish\WordLatexVSTO_Setup.exe`。
 
 核心测试可单独执行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\Test-Core.ps1
 ```
+
+GitHub Actions 在 Windows 上编译 Release、运行转换器和扫描器测试，再生成 EXE、MSI 和 ZIP。向 `main` 提交新版本会发布对应的 GitHub Release。发布版本应与 `PRODUCT_VERSION`、程序集、VSTO 清单和安装器版本保持一致；已发布版本的标签和资产保留，再次发布其他提交时应增加版本号。更新说明见 [发布说明](docs/RELEASE_NOTES.md)。
 
 ## AfterMath 集成
 

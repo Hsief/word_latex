@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 env:
-  PRODUCT_VERSION: 1.1.1
+  PRODUCT_VERSION: 1.1.2
 
 jobs:
   build:
@@ -22,6 +22,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate PowerShell script syntax
+        shell: powershell
+        run: |
+          foreach ($script in (Get-ChildItem .\scripts -Filter *.ps1)) {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($script.FullName, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors.Count -gt 0) {
+              $parseErrors | ForEach-Object { Write-Host $_.Message }
+              throw "PowerShell syntax validation failed: $($script.Name)"
+            }
+          }
 
       - name: Configure MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -46,10 +59,13 @@ jobs:
             /p:ApplicationVersion="$env:PRODUCT_VERSION.0" `
             /p:SignManifests=true `
             /p:ManifestCertificateThumbprint="${{ steps.certificate.outputs.thumbprint }}"
+          if ($LASTEXITCODE -ne 0) { throw 'Solution build failed.' }
 
       - name: Run converter and scanner tests
         shell: powershell
-        run: .\tests\AfterMathCore.Tests\bin\Release\AfterMathCore.Tests.exe
+        run: |
+          .\tests\AfterMathCore.Tests\bin\Release\AfterMathCore.Tests.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Converter and scanner tests failed.' }
 
       - name: Stage VSTO files for MSI deployment
         shell: powershell
@@ -76,7 +92,7 @@ jobs:
             throw "Unexpected MSI manifest codebase: $applicationCodebase"
           }
           New-Item -ItemType Directory -Path "$stage\docs" -Force | Out-Null
-          Copy-Item .\docs\INSTALL.md, .\docs\USER_GUIDE.md "$stage\docs\" -Force
+          Copy-Item .\docs\INSTALL.md, .\docs\USER_GUIDE.md, .\docs\RELEASE_NOTES.md "$stage\docs\" -Force
           Copy-Item .\README.md, .\LICENSE, .\THIRD_PARTY_NOTICES.md $stage -Force
 
       - name: Build Windows Installer package
@@ -86,6 +102,7 @@ jobs:
             Sort-Object FullName -Descending | Select-Object -First 1
           if (-not $wix) {
             choco install wixtoolset -y --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'WiX Toolset installation failed.' }
             $wix = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset v3.*\bin\candle.exe' -ErrorAction SilentlyContinue |
               Sort-Object FullName -Descending | Select-Object -First 1
           }
@@ -121,7 +138,7 @@ jobs:
           $iscc = (Get-Command iscc.exe -ErrorAction SilentlyContinue).Source
           if (-not $iscc) { $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' }
           & $iscc "/DMyAppVersion=$env:PRODUCT_VERSION" .\installer\setup\WordLatexVSTO.iss
-          if (-not (Test-Path .\installer\publish\WordLatexVSTO_Setup.exe)) {
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path .\installer\publish\WordLatexVSTO_Setup.exe)) {
             throw 'Setup launcher was not generated.'
           }
 
@@ -131,7 +148,7 @@ jobs:
           Remove-Item .\release -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Path .\release -Force | Out-Null
           Copy-Item .\installer\publish\WordLatexVSTO_Setup.exe, .\installer\publish\WordLatexVSTO.msi .\release\
-          Copy-Item .\README.md, .\docs\INSTALL.md, .\docs\USER_GUIDE.md, .\LICENSE, .\THIRD_PARTY_NOTICES.md .\release\
+          Copy-Item .\README.md, .\docs\INSTALL.md, .\docs\USER_GUIDE.md, .\docs\RELEASE_NOTES.md, .\LICENSE, .\THIRD_PARTY_NOTICES.md .\release\
           Compress-Archive -Path .\release\* -DestinationPath .\WordLatexVSTO-$env:PRODUCT_VERSION.zip -Force
 
       - name: Upload build artifact
@@ -152,33 +169,26 @@ jobs:
         run: |
           $tag = "v$env:PRODUCT_VERSION"
           $ErrorActionPreference = 'Continue'
+          $tagCommit = gh api "repos/$env:GITHUB_REPOSITORY/commits/$tag" --jq '.sha' 2>$null
+          $tagExists = $LASTEXITCODE -eq 0
           gh release view $tag *> $null
           $releaseExists = $LASTEXITCODE -eq 0
           $ErrorActionPreference = 'Stop'
+          if ($tagExists -and "$tagCommit".Trim() -ne $env:GITHUB_SHA) {
+            throw "Tag $tag already points to another commit. Increase PRODUCT_VERSION before publishing."
+          }
+          if ($releaseExists) {
+            if (-not $tagExists) { throw "Cannot verify the commit for existing release $tag." }
+            Write-Host "Release $tag already exists for this commit; published assets are unchanged."
+            exit 0
+          }
           $assets = @(
             '.\installer\publish\WordLatexVSTO_Setup.exe',
             '.\installer\publish\WordLatexVSTO.msi',
             ".\WordLatexVSTO-$env:PRODUCT_VERSION.zip"
           )
-          if ($releaseExists) {
-            gh release upload $tag $assets --clobber
-          } else {
-            gh release create $tag $assets `
-              --target "$env:GITHUB_SHA" `
-              --title "WordLatexVSTO $env:PRODUCT_VERSION" `
-              --notes "Initial stable release. Bidirectional LaTeX and native Word equation conversion. The installer registers the add-in once for all users and removes stale per-user registrations that hide the Ribbon tab."
-          }
-
-      - name: Keep only the stable GitHub release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        shell: powershell
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $keepTag = "v$env:PRODUCT_VERSION"
-          $oldTags = @(gh release list --limit 100 --json tagName --jq '.[].tagName')
-          foreach ($oldTag in $oldTags) {
-            if ($oldTag -and $oldTag -ne $keepTag) {
-              gh release delete $oldTag --cleanup-tag --yes
-            }
-          }
+          gh release create $tag $assets `
+            --target "$env:GITHUB_SHA" `
+            --title "WordLatexVSTO $env:PRODUCT_VERSION" `
+            --notes-file .\docs\RELEASE_NOTES.md
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release publication failed.' }

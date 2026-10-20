@@ -1,6 +1,6 @@
 param(
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string]$Version = '1.1.1'
+    [string]$Version = '1.1.2'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -65,7 +65,7 @@ try {
     }
 
     New-Item -ItemType Directory -Path (Join-Path $staging 'docs') -Force | Out-Null
-    Copy-Item (Join-Path $root 'docs\INSTALL.md'), (Join-Path $root 'docs\USER_GUIDE.md') (Join-Path $staging 'docs') -Force
+    Copy-Item (Join-Path $root 'docs\INSTALL.md'), (Join-Path $root 'docs\USER_GUIDE.md'), (Join-Path $root 'docs\RELEASE_NOTES.md') (Join-Path $staging 'docs') -Force
     Copy-Item (Join-Path $root 'README.md'), (Join-Path $root 'LICENSE'), (Join-Path $root 'THIRD_PARTY_NOTICES.md') $staging -Force
 
     $harvest = Join-Path $root 'installer\setup\HarvestedFiles.wxs'
